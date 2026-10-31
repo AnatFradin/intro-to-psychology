@@ -1,0 +1,7 @@
+# קבצים גדולים: לא בגיט. נמצאים בתיקייה המקומית ובגוגל דרייב (ראי חומרי-מקור/README.md)
+חומרי-מקור/Full book *.pdf
+פודקאסטים/*.m4a
+
+# macOS / Obsidian
+.DS_Store
+.obsidian/workspace.json
