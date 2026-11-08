@@ -1,0 +1,1682 @@
+<meta charset="utf-8">
+<title>מעבדת הביולוגיה של ההתנהגות</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Hebrew:wght@400;500;600;700&family=Secular+One&display=swap">
+<style>
+/* Layout: מעבדה. כל תחנה היא שולחן עבודה: ההדמיה בצד אחד, יומן השלבים בצד השני. ניווט דביק לפי חלקי המדריך (3.1 · 3.2 · 3.3). */
+:root{
+  --bg:#ECF0EF; --paper:#FAFCFB; --ink:#14222B; --muted:#55666F; --line:#C6D1D2; --soft:#DEE6E5;
+  --spark:#E39A0B; --spark-ink:#8C5900;   /* חשמל: פוטנציאל פעולה */
+  --chem:#0F8A78;                           /* כימיה, נוירון סנסורי */
+  --exc:#D65A26;                            /* עירור, נוירון מוטורי */
+  --inh:#5A57D1;                            /* עיכוב */
+  --inter:#8B57C4;                          /* אינטרנוירון */
+  --tissue:#F1DDD3; --tissue-line:#B4836F;  /* רקמה */
+  --bird:#8A7A68; --seed:#B9A27A;
+  --l1:#C8782F; --l2:#B4467C; --l3:#3D78C2; /* שלוש שכבות המוח */
+  --lf:#EFC9B6; --lp:#C9DFB7; --lo:#BBD0EC; --lt:#EEDDA8; /* אונות */
+  --good:#1F8A4C; --bad:#C2413A;
+  --shadow:0 1px 0 rgba(20,34,43,.04),0 10px 28px -16px rgba(20,34,43,.28);
+  --f-display:"Secular One","IBM Plex Sans Hebrew",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Hebrew",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0D1417; --paper:#141E22; --ink:#E2EBEC; --muted:#95A6AC; --line:#2C3C42; --soft:#1C2A2F;
+  --spark:#F4B53A; --spark-ink:#F6C86A; --chem:#2DBFA6; --exc:#F0804F; --inh:#8E8BF4; --inter:#B68DEC;
+  --tissue:#3A2B27; --tissue-line:#A9786A; --bird:#B3A491; --seed:#8F7D5C;
+  --l1:#E39C57; --l2:#DE72A6; --l3:#71A4E8;
+  --lf:#5B3B2F; --lp:#35492D; --lo:#2C405E; --lt:#4E4527;
+  --good:#47C27C; --bad:#EF706A;
+  --shadow:0 1px 0 rgba(0,0,0,.25),0 12px 30px -16px rgba(0,0,0,.7);
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D1417; --paper:#141E22; --ink:#E2EBEC; --muted:#95A6AC; --line:#2C3C42; --soft:#1C2A2F;
+  --spark:#F4B53A; --spark-ink:#F6C86A; --chem:#2DBFA6; --exc:#F0804F; --inh:#8E8BF4; --inter:#B68DEC;
+  --tissue:#3A2B27; --tissue-line:#A9786A; --bird:#B3A491; --seed:#8F7D5C;
+  --l1:#E39C57; --l2:#DE72A6; --l3:#71A4E8;
+  --lf:#5B3B2F; --lp:#35492D; --lo:#2C405E; --lt:#4E4527;
+  --good:#47C27C; --bad:#EF706A;
+  --shadow:0 1px 0 rgba(0,0,0,.25),0 12px 30px -16px rgba(0,0,0,.7);
+  color-scheme:dark}
+
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.page{direction:rtl;max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 72px}
+b,strong{font-weight:700}
+.en{font-family:var(--f-mono);font-size:.86em;color:var(--muted);unicode-bidi:isolate;direction:ltr;display:inline-block}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+
+/* ---------- header ---------- */
+.top{padding-block:40px 18px;display:grid;gap:10px}
+.kicker{font-size:13px;letter-spacing:.06em;color:var(--muted);font-weight:600}
+h1{font-family:var(--f-display);font-weight:400;font-size:clamp(30px,5.2vw,52px);line-height:1.1;margin:0;text-wrap:balance}
+.intro{max-width:64ch;margin:0;color:var(--ink);font-size:17px}
+.scope{max-width:70ch;margin:0;font-size:14.5px;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;font-size:14px;color:var(--muted)}
+.trace{width:100%;height:46px;display:block;margin-top:6px}
+.trace .base{fill:none;stroke:var(--line);stroke-width:2}
+.trace .spk{fill:none;stroke:var(--spark);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:60 1000;stroke-dashoffset:60;animation:sweep 5.5s linear infinite}
+@keyframes sweep{from{stroke-dashoffset:60}to{stroke-dashoffset:-1000}}
+
+/* ---------- nav ---------- */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line);margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)))}
+.nav-in{display:flex;gap:6px;overflow-x:auto;padding:9px max(16px,env(safe-area-inset-right,0px));scrollbar-width:thin}
+.nav a{flex:none;text-decoration:none;color:var(--muted);font-size:13.5px;padding:5px 10px;border-radius:7px;border:1px solid transparent;white-space:nowrap}
+.nav a:hover{color:var(--ink);border-color:var(--line)}
+.nav a.cur{color:var(--paper);background:var(--ink)}
+.nav .grp{flex:none;font-family:var(--f-mono);font-size:12px;color:var(--spark-ink);padding:6px 4px 6px 2px;margin-inline-start:8px}
+.nav .grp:first-child{margin-inline-start:0}
+
+/* ---------- parts & stations ---------- */
+.part{margin-top:56px;padding:22px 0 6px;border-top:3px solid var(--ink);display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px}
+.part .pn{font-family:var(--f-mono);font-size:15px;color:var(--spark-ink)}
+.part h2{font-family:var(--f-display);font-weight:400;font-size:clamp(24px,3.4vw,34px);margin:0;line-height:1.2}
+.part .pp{font-size:14px;color:var(--muted)}
+.station{padding-block:34px 10px;border-bottom:1px solid var(--line);scroll-margin-top:64px}
+.st-head{display:grid;gap:6px;margin-bottom:18px;max-width:78ch}
+.eyebrow{font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+.eyebrow .sec{font-family:var(--f-mono);color:var(--spark-ink);font-weight:500}
+.station h3.st{font-family:var(--f-display);font-weight:400;font-size:clamp(22px,2.8vw,28px);line-height:1.25;margin:0;text-wrap:balance}
+.lead{margin:0;font-size:16px}
+.sub{font-size:17px;font-weight:700;margin:26px 0 10px;display:flex;gap:8px;align-items:baseline}
+.sub .ab{font-family:var(--f-mono);color:var(--spark-ink);font-weight:500;font-size:14px}
+
+.lab{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:16px;align-items:start}
+.lab.even{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+@media (max-width:860px){.lab,.lab.even{grid-template-columns:minmax(0,1fr)}}
+.fig{margin:0;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px;box-shadow:var(--shadow);min-width:0}
+.fig svg{display:block;width:100%;height:auto;direction:ltr;overflow:visible}
+.fig .cap{font-size:12.5px;color:var(--muted);margin-top:6px}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:10px;min-width:0;align-content:start}
+.step-meta{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.step-n{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.dots{display:flex;gap:5px;flex-wrap:wrap}
+.dot{width:11px;height:11px;border-radius:50%;border:1.5px solid var(--line);background:transparent;padding:0;cursor:pointer}
+.dot.done{background:var(--line)}
+.dot.cur{background:var(--spark);border-color:var(--spark)}
+.step-t{margin:0;font-size:18px;line-height:1.35}
+.step-d{font-size:15.5px;min-height:5.2em}
+.step-d p{margin:0 0 6px}
+.ctrl{display:flex;gap:8px;flex-wrap:wrap}
+.btn{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:8px;padding:8px 14px;cursor:pointer;line-height:1.2}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.btn:disabled{opacity:.38;cursor:default}
+.btn:focus-visible,.seg button:focus-visible,.dot:focus-visible,.chip:focus-visible,summary:focus-visible,.nav a:focus-visible{outline:2px solid var(--spark);outline-offset:2px}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:9px;background:var(--paper);padding:2px;gap:2px}
+.seg button{border:0;background:transparent;padding:6px 11px;border-radius:7px;font:inherit;font-size:14px;color:var(--muted);cursor:pointer;line-height:1.3}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.lbl{font-size:13px;color:var(--muted)}
+
+.src{font-size:11.5px;font-weight:600;padding:0 6px;border-radius:5px;border:1px solid currentColor;white-space:nowrap;vertical-align:1px;line-height:1.6;display:inline-block}
+.src.book{color:var(--chem)}
+.src.guide{color:var(--l3)}
+.src.mine{color:var(--muted);border-style:dashed}
+.star{color:var(--spark-ink);font-size:.85em}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:10px;margin-top:14px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:14.5px;min-width:0}
+.card h4{margin:0 0 4px;font-size:15.5px}
+.card p{margin:0}
+.note{font-size:14.5px;background:var(--soft);border-radius:10px;padding:10px 14px;margin-top:12px}
+.note p{margin:0 0 4px}
+.tbl-wrap{overflow-x:auto;margin-top:12px}
+table{border-collapse:collapse;width:100%;font-size:14.5px;background:var(--paper);border-radius:10px;overflow:hidden}
+th,td{text-align:right;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:700;background:var(--soft)}
+td.hit{background:color-mix(in srgb,var(--spark) 22%,var(--paper));font-weight:700}
+
+details.check{margin-top:16px;border:1px dashed var(--line);border-radius:10px;padding:10px 14px;background:var(--paper)}
+details.check summary{cursor:pointer;font-weight:600}
+details.check summary::marker{color:var(--spark)}
+details.check p{margin:8px 0 0}
+
+/* ---------- svg vocabulary ---------- */
+svg .t{font-family:var(--f-body);font-size:13px;fill:var(--ink)}
+svg .ts{font-family:var(--f-body);font-size:11.5px;fill:var(--muted)}
+svg .tb{font-weight:700}
+svg .tm{font-family:var(--f-mono);font-size:12px;fill:var(--ink)}
+svg .tissue{fill:var(--tissue);stroke:var(--tissue-line);stroke-width:1.5}
+svg .ln{fill:none;stroke:var(--muted);stroke-width:1.2}
+svg .dimk{opacity:.22;transition:opacity .45s}
+svg .hidek{opacity:0;transition:opacity .45s}
+svg .dimk.vis,svg .hidek.vis{opacity:.7}
+svg .dimk.hl,svg .hidek.hl{opacity:1}
+svg .trav.hl{stroke-dasharray:100;animation:draw 1.25s ease-out both}
+@keyframes draw{from{stroke-dashoffset:100}to{stroke-dashoffset:0}}
+svg .pulse{fill:none;stroke:var(--spark);stroke-width:9;stroke-linecap:round;stroke-dasharray:4 300;stroke-dashoffset:4;opacity:0}
+svg .pulse.hl,svg .pulse.go{opacity:1;animation:run 1.3s linear infinite}
+@keyframes run{from{stroke-dashoffset:4}to{stroke-dashoffset:-100}}
+svg .glow.hl{filter:drop-shadow(0 0 5px var(--spark))}
+svg [data-part],svg .click{cursor:pointer}
+svg .sel{stroke:var(--ink)!important;stroke-width:3!important}
+
+/* finch */
+.bird{transition:opacity .6s,transform .6s}
+.bird.dead{opacity:.13}
+.bird .ring{fill:none;stroke:var(--spark);stroke-width:2;opacity:0}
+.bird.born .ring{opacity:1}
+.phases{display:flex;gap:6px;flex-wrap:wrap}
+.phases span{font-size:13px;padding:3px 10px;border-radius:20px;border:1px solid var(--line);color:var(--muted)}
+.phases span.on{background:var(--spark);border-color:var(--spark);color:#1b1300}
+.stats{font-size:13.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* meters */
+.meter{position:relative;height:14px;border-radius:7px;background:linear-gradient(90deg,var(--l3),var(--soft) 50%,var(--l2));direction:ltr}
+.meter i{position:absolute;top:-5px;width:4px;height:24px;background:var(--ink);border-radius:2px;transition:left .6s;transform:translateX(-2px)}
+.meter-l{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);direction:ltr}
+
+/* reflex timeline */
+.tl{display:grid;gap:6px;font-size:13.5px}
+.tl .bar{position:relative;height:30px;border-radius:6px;background:var(--soft)}
+.tl .m{position:absolute;top:4px;padding:1px 8px;border-radius:5px;font-size:12.5px;opacity:.25;transition:opacity .4s;white-space:nowrap}
+.tl .m.on{opacity:1}
+.leg{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13.5px}
+.leg span{display:inline-flex;align-items:center;gap:6px}
+.leg i{width:18px;height:4px;border-radius:2px;display:inline-block}
+
+/* AP scope */
+.scope-wrap{display:grid;gap:8px}
+.feel{display:flex;align-items:center;gap:10px;font-size:14px}
+.feel .fb{flex:1;height:12px;border-radius:6px;background:var(--soft);overflow:hidden;direction:rtl}
+.feel .fb i{display:block;height:100%;width:0;background:var(--exc);transition:width .5s}
+.gauge-txt{font-size:15px;font-weight:600}
+
+/* quizzes */
+.quiz{display:grid;gap:10px}
+.clue{font-size:17px;font-weight:600;min-height:2.6em}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:20px;padding:6px 12px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.chip.ok{background:var(--good);border-color:var(--good);color:#fff}
+.chip.no{background:var(--bad);border-color:var(--bad);color:#fff}
+.fb-msg{font-size:15px;min-height:3em}
+.fb-msg .y{color:var(--good);font-weight:700}
+.fb-msg .n{color:var(--bad);font-weight:700}
+.score{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* NT explorer */
+.nt-panel h4{margin:0;font-size:18px}
+.nt-panel dl{margin:8px 0 0;display:grid;gap:6px}
+.nt-panel dt{font-size:12.5px;color:var(--muted);font-weight:600}
+.nt-panel dd{margin:0;font-size:15px}
+
+/* autonomic tiles */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:8px}
+.tile{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:8px 10px;display:grid;gap:2px;justify-items:center;text-align:center}
+.tile svg{width:64px;height:48px;direction:ltr}
+.tile b{font-size:14px}
+.tile span{font-size:13px;color:var(--muted);min-height:2.6em}
+.heart{transform-origin:32px 26px;animation:beat var(--hb,1.1s) ease-in-out infinite}
+@keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.18)}30%{transform:scale(.96)}}
+.drop{animation:fall 1.3s linear infinite}
+@keyframes fall{from{transform:translateY(-6px);opacity:0}30%{opacity:1}to{transform:translateY(16px);opacity:0}}
+.wave{stroke-dasharray:6 6;animation:flow 1s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-24}}
+.off .drop,.off .wave{animation:none;opacity:0}
+
+/* race */
+.race{display:grid;gap:8px;font-size:14px}
+.lane{display:grid;grid-template-columns:7.5em minmax(0,1fr);gap:8px;align-items:center}
+.lane .tr{height:14px;border-radius:7px;background:var(--soft);overflow:hidden;position:relative}
+.lane .tr i{position:absolute;inset:0 0 0 auto;width:0;border-radius:7px}
+.lane.n i{background:var(--spark)}
+.lane.h i{background:var(--l2)}
+
+@media (max-width:560px){
+  .step-d{min-height:0}
+  .station{padding-block:28px 8px}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+</style>
+
+<div class="page" dir="rtl" lang="he">
+
+<header class="top">
+  <div class="kicker">מבוא לפסיכולוגיה · פרק 3 · עמ' 96–143</div>
+  <h1>מעבדת הביולוגיה של ההתנהגות</h1>
+  <p class="intro">שש־עשרה תחנות, אחת לכל תהליך בפרק, לפי הסדר של מדריך הלמידה. בכל תחנה יש הדמיה, הסבר לכל שלב ושאלה אחת לבדיקה עצמית.</p>
+  <p class="scope">התוכן כאן הוא רק מה שהמדריך מטיל ללמוד. לחצי <b>הבא ←</b> כדי להתקדם שלב, או על חלק בציור כדי לקרוא עליו. <span class="star">★</span> = מונח רשמי מהשוליים של הספר.</p>
+  <div class="legend"><span>מקור:</span><span class="src book">ספר</span><span class="src guide">מדריך</span><span class="src mine">לא מהספר</span><span>(הדמיה, אנלוגיה או דוגמה שלי)</span></div>
+  <svg class="trace" viewBox="0 0 1000 46" preserveAspectRatio="none" aria-hidden="true">
+    <path class="base" d="M0,30 L1000,30"/>
+    <path class="spk" d="M0,30 L90,30 L96,4 L102,40 L108,30 L230,30 L236,4 L242,40 L248,30 L300,30 L306,4 L312,40 L318,30 L520,30 L526,4 L532,40 L538,30 L570,30 L576,4 L582,40 L588,30 L610,30 L616,4 L622,40 L628,30 L640,30 L646,4 L652,40 L658,30 L860,30 L866,4 L872,40 L878,30 L1000,30"/>
+  </svg>
+</header>
+
+<nav class="nav" aria-label="תחנות">
+  <div class="nav-in">
+    <span class="grp">3.1</span>
+    <a href="#selection">בררה טבעית</a><a href="#genes">מהתא עד הגן</a><a href="#twins">תאומים</a>
+    <span class="grp">3.2</span>
+    <a href="#neuron">הנוירון</a><a href="#reflex">רפלקס</a><a href="#ap">פוטנציאל פעולה</a><a href="#synapse">סינפסה</a><a href="#chain">עיכוב של עיכוב</a><a href="#nt">נוירוטרנסמיטרים</a><a href="#impulse">"זה גנטי"</a>
+    <span class="grp">3.3</span>
+    <a href="#methods">חקר המוח</a><a href="#ns">מערכת העצבים</a><a href="#brain">מבני המוח</a><a href="#split">חצויי מוח</a><a href="#endo">הורמונים</a><a href="#plastic">גמישות</a>
+  </div>
+</nav>
+
+<!-- ================= 3.1 ================= -->
+<div class="part"><span class="pn">3.1</span><h2>תורשה והתנהגות</h2><span class="pp">עמ' 96–106 · שאלות 1–7</span></div>
+
+<!-- ---------- בררה טבעית ---------- -->
+<section class="station" id="selection">
+  <header class="st-head">
+    <div class="eyebrow"><span class="sec">3.1.1</span><span>שאלות 1–4 · עמ' 96–101</span></div>
+    <h3 class="st">בררה טבעית: מי שורד באי?</h3>
+    <p class="lead">צ'ארלס דרווין (Charles Darwin) מצא באיי גלפגוס 13 מינים של פרושים. פיטר ורוזמרי גרנט (Peter &amp; Rosemary Grant) הראו שבררה טבעית <span class="star">★</span> קורית גם בתוך כמה שנים. בחרי סביבה ולחצי "הבא" כדי לראות את שלושת המרכיבים: <b>שונות</b>, <b>סביבה</b> ו<b>תורשה</b>.</p>
+  </header>
+  <div class="lab">
+    <figure class="fig">
+      <svg id="finch-svg" viewBox="0 0 560 270" role="img" aria-label="אוכלוסיית פרושים. לכל פרוש מקור בגודל אחר"></svg>
+      <svg id="finch-hist" viewBox="0 0 560 140" role="img" aria-label="כמה פרושים יש מכל גודל מקור"></svg>
+      <div class="cap">כל ציפור היא פרוש, והמקור הכתום הוא התכונה. הקו המקווקו בגרף הוא הדור הקודם. <span class="src mine">ההדמיה: לא מהספר</span></div>
+    </figure>
+    <div class="panel">
+      <div class="row"><span class="lbl">הסביבה באי:</span>
+        <div class="seg" id="finch-env">
+          <button type="button" data-env="drought" aria-pressed="true">בצורת</button>
+          <button type="button" data-env="rain" aria-pressed="false">שנה גשומה</button>
+          <button type="button" data-env="plenty" aria-pressed="false">שפע מכל הסוגים</button>
+        </div>
+      </div>
+      <div class="phases" id="finch-phases"><span>1 · שונות</span><span>2 · הסביבה בוחרת</span><span>3 · תורשה</span></div>
+      <div class="step-d" id="finch-text"></div>
+      <div class="stats" id="finch-stats"></div>
+      <div class="ctrl"><button class="btn" id="finch-reset" type="button">מהתחלה</button><button class="btn" id="finch-gen" type="button">דור שלם</button><button class="btn primary" id="finch-next" type="button">הבא ←</button></div>
+    </div>
+  </div>
+
+  <div class="sub"><span class="ab">א</span>גנוטיפ ופנוטיפ (שאלות 2–3)</div>
+  <div class="cards">
+    <div class="card"><h4>גנוטיפ <span class="star">★</span> <span class="en">genotype</span></h4><p>המבנה הגנטי שהפרט יורש מההורים, חצי מכל הורה. בהדמיה: מה שהצאצאים יורשים מהשורדים.</p></div>
+    <div class="card"><h4>פנוטיפ <span class="star">★</span> <span class="en">phenotype</span></h4><p>איך הפרט נראה ומתנהג בפועל. הוא מתפתח מהמפגש בין הגנוטיפ לסביבה. בהדמיה: גודל המקור שרואים.</p></div>
+    <div class="card"><h4>יתרון סלקטיבי <span class="star">★</span> <span class="en">selective advantage</span></h4><p>תכונה שנותנת סיכוי טוב יותר לשרוד ולהתרבות <b>בסביבה מסוימת</b>. מקור גדול הוא יתרון בבצורת, אבל לא בשנה גשומה.</p></div>
+  </div>
+  <div class="note">
+    <p><b>הסביבה בוחרת לפי הפנוטיפ, והתורשה מעבירה הלאה את הגנוטיפ.</b> <span class="src mine">ניסוח שלי</span></p>
+    <p>הקשר ביניהם לא אחד־לאחד <span class="src guide">מדריך</span>. עיניים חומות יכולות לבוא מ"חום" ו"חום" וגם מ"חום" ו"כחול": גנוטיפים שונים, אותו פנוטיפ. נשים שנושאות גנים שקשורים לסרטן שד: חלקן חולות וחלקן לא. אותו גנוטיפ, פנוטיפים שונים.</p>
+  </div>
+
+  <div class="sub"><span class="ab">ב</span>אבולוציה אנושית: שלושה שינויים (שאלה 4)</div>
+  <div class="cards">
+    <div class="card"><h4>עמידה זקופה <span class="star">★</span></h4><p>הידיים השתחררו לאחוז בכלים. כך אפשר לחקור סביבות חדשות ולנצל משאבים חדשים.</p></div>
+    <div class="card"><h4>הגדלת נפח המוח <span class="star">★</span></h4><p>ביחס לגוף. מאפשרת חשיבה, הסקת מסקנות, זיכרון ותכנון.</p></div>
+    <div class="card"><h4>שפה</h4><p>להזהיר מסכנה, להסביר איך בונים כלי, לחזק קשרים. לומדים מהניסיון של אחרים, ולא רק מניסוי וטעייה.</p></div>
+  </div>
+  <div class="note"><p><b>התפתחות תרבותית <span class="star">★</span></b> (cultural evolution): הסתגלות לשינויים בסביבה <b>באמצעות למידה</b>, והשפה היא הבסיס שלה. היא מהירה (<span class="src book">ספר</span> הסתגלנו למחשבים אישיים בתוך עשרות שנים). האבולוציה הביולוגית איטית, כי היא עוברת בגנים לאורך דורות רבים.</p></div>
+
+  <details class="check"><summary>בדיקה עצמית: למה בסביבה עם שפע של גרעינים מכל הסוגים אין בררה לפי צורת המקור?</summary><p>כי אין מחסור ואין תחרות. כל פרוש מוצא מה לאכול, עם מקור קטן או גדול, ולכן צורת המקור לא קובעת מי ישרוד. תכונה היא יתרון רק ביחס לסביבה מסוימת. נסי בהדמיה: בחרי "שפע מכל הסוגים" והריצי כמה דורות. הממוצע כמעט לא זז.</p></details>
+</section>
+
+<!-- ---------- מהתא עד הגן ---------- -->
+<section class="station" id="genes">
+  <header class="st-head">
+    <div class="eyebrow"><span class="sec">3.1.2</span><span>שאלה 5 · עמ' 101–104</span></div>
+    <h3 class="st">מהתא עד הגן: זום פנימה</h3>
+    <p class="lead">התורשה עוברת דרך מבנים שיושבים זה בתוך זה. כל לחיצה על "הבא" מתקרבת צעד אחד, מהתא ועד התכונה שרואים.</p>
+  </header>
+  <div class="lab" id="genes-lab">
+    <figure class="fig">
+      <svg viewBox="0 0 560 290" role="img" aria-label="תא, כרומוזומים, דנ&quot;א, גן, חלבון ותכונה">
+        <g class="hidek" data-id="lv1">
+          <ellipse cx="280" cy="145" rx="215" ry="120" class="tissue"/>
+          <ellipse cx="300" cy="138" rx="66" ry="56" fill="var(--l2)" fill-opacity=".18" stroke="var(--l2)" stroke-width="2"/>
+          <path d="M262,126 q10,-14 20,0 t20,0 t20,0 M266,150 q10,12 20,0 t20,0 t18,0" fill="none" stroke="var(--l2)" stroke-width="2"/>
+          <ellipse cx="160" cy="190" rx="24" ry="10" fill="none" stroke="var(--tissue-line)" stroke-width="1.5"/>
+          <ellipse cx="430" cy="112" rx="20" ry="9" fill="none" stroke="var(--tissue-line)" stroke-width="1.5"/>
+          <circle cx="190" cy="98" r="6" fill="var(--tissue-line)" opacity=".5"/>
+          <circle cx="420" cy="196" r="5" fill="var(--tissue-line)" opacity=".5"/>
+          <text class="t tb" x="300" y="216" text-anchor="middle">גרעין התא</text>
+          <text class="t tb" x="140" y="80" text-anchor="middle">תא</text>
+        </g>
+        <g class="hidek" data-id="lv2" id="chromo"></g>
+        <g class="hidek" data-id="lv3" id="helix"></g>
+        <g class="hidek" data-id="lv4" id="genestrip"></g>
+        <g class="hidek" data-id="lv5" id="protein"></g>
+        <g class="hidek" data-id="lv6">
+          <circle cx="280" cy="140" r="56" fill="var(--soft)" stroke="var(--line)"/>
+          <text class="t tb" x="280" y="136" text-anchor="middle">פנוטיפ</text>
+          <text class="ts" x="280" y="154" text-anchor="middle">מה שרואים</text>
+          <g class="t">
+            <rect x="60" y="40" width="130" height="38" rx="8" fill="var(--paper)" stroke="var(--line)"/><text x="125" y="64" text-anchor="middle">מבנה גוף</text>
+            <rect x="370" y="40" width="130" height="38" rx="8" fill="var(--paper)" stroke="var(--line)"/><text x="435" y="64" text-anchor="middle">כוח</text>
+            <rect x="60" y="202" width="130" height="38" rx="8" fill="var(--paper)" stroke="var(--line)"/><text x="125" y="226" text-anchor="middle">אינטליגנציה</text>
+            <rect x="370" y="202" width="130" height="38" rx="8" fill="var(--paper)" stroke="var(--line)"/><text x="435" y="226" text-anchor="middle">דפוסי התנהגות</text>
+          </g>
+          <path d="M190,70 L232,104 M370,70 L328,104 M190,212 L232,178 M370,212 L328,178" class="ln"/>
+          <text class="ts" x="280" y="275" text-anchor="middle">הגנים נפגשים עם הסביבה, ומהמפגש יוצאת התכונה</text>
+        </g>
+      </svg>
+    </figure>
+    <div class="panel">
+      <div class="step-meta"><span class="step-n"></span><div class="dots"></div></div>
+      <h3 class="step-t"></h3>
+      <div class="step-d"></div>
+      <div class="ctrl"><button class="btn" data-act="prev" type="button">→ הקודם</button><button class="btn" data-act="play" type="button">הפעלה</button><button class="btn primary" data-act="next" type="button">הבא ←</button></div>
+    </div>
+  </div>
+
+  <div class="sub"><span class="ab">א</span>כרומוזומי המין <span class="star">★</span>: מי קובע זכר או נקבה?</div>
+  <div class="lab even">
+    <div class="panel">
+      <div class="cards" style="margin-top:0">
+        <div class="card"><h4>מאמא</h4><p class="num" style="font-size:28px">X</p><p class="lbl">תמיד X</p></div>
+        <div class="card"><h4>מאבא</h4><p class="num" id="sx-dad" style="font-size:28px">?</p><p class="lbl">X או Y</p></div>
+      </div>
+      <div class="ctrl"><button class="btn primary" id="sx-go" type="button">הפריה</button></div>
+      <div class="fb-msg" id="sx-out">לחצי "הפריה" כדי לראות איזה כרומוזום מגיע מהאב.</div>
+    </div>
+    <div class="note" style="margin-top:0">
+      <p><b>XX = נקבה, XY = זכר.</b> מהאם מגיע תמיד X, ולכן מה שמגיע מהאב קובע את המין. <span class="src mine">מסקנה שלי</span></p>
+      <p>דימוי: בכל תא יש ספר מתכונים בן 46 כרכים (כרומוזומים), כתוב באותיות של דנ"א. כל מתכון (גן) מלמד להכין חלבון אחד. <span class="src mine">לא מהספר</span></p>
+    </div>
+  </div>
+  <details class="check"><summary>בדיקה עצמית: מה ההבדל בין כרומוזום לגן?</summary><p>כרומוזום הוא גדיל ארוך שלם של דנ"א (יש 46 בכל תא). גן הוא קטע קטן בתוך הדנ"א, עם הוראות לייצור חלבון אחד. בכל כרומוזום יש אלפי גנים.</p></details>
+</section>
+
+<!-- ---------- תאומים ---------- -->
+<section class="station" id="twins">
+  <header class="st-head">
+    <div class="eyebrow"><span class="sec">3.1.2</span><span>שאלות 6–7 · עמ' 104–106</span></div>
+    <h3 class="st">מחקרי תאומים: כמה מהתכונה עובר בגנים?</h3>
+    <p class="lead"><b>תורשתיות <span class="star">★</span></b> (heritability) היא המידה שבה תכונה עוברת בתורשה, על סולם מ־0 עד 1. מחקרי תאומים <span class="star">★</span> משווים שני סוגי זוגות שגדלים יחד, אבל חולקים כמות שונה של גנים.</p>
+  </header>
+  <div class="lab">
+    <figure class="fig">
+      <svg viewBox="0 0 560 300" role="img" aria-label="תאומים זהים ותאומים לא זהים">
+        <text class="t tb" x="410" y="20" text-anchor="middle">תאומים זהים · מונוזיגוטים ★</text>
+        <text class="t tb" x="150" y="20" text-anchor="middle">תאומים לא־זהים · דיזיגוטים ★</text>
+        <text class="ts" x="410" y="40" text-anchor="middle">ביצית אחת</text>
+        <text class="ts" x="150" y="40" text-anchor="middle">שתי ביציות</text>
+        <circle cx="410" cy="72" r="20" class="tissue"/>
+        <circle cx="115" cy="72" r="18" class="tissue"/><circle cx="185" cy="72" r="18" class="tissue"/>
+        <path d="M398,90 L378,124 M422,90 L442,124 M115,92 L115,124 M185,92 L185,124" class="ln" stroke-width="1.6"/>
+        <g fill="var(--paper)" stroke="var(--muted)" stroke-width="1.6">
+          <circle cx="375" cy="144" r="17"/><circle cx="445" cy="144" r="17"/><circle cx="115" cy="144" r="17"/><circle cx="185" cy="144" r="17"/>
+        </g>
+        <path d="M368,148 q7,6 14,0 M438,148 q7,6 14,0 M108,148 q7,6 14,0 M178,148 q7,6 14,0" class="ln" stroke-width="1.6"/>
+        <text class="ts" x="410" y="186" text-anchor="middle">גנים משותפים</text>
+        <text class="ts" x="150" y="186" text-anchor="middle">גנים משותפים</text>
+        <rect x="330" y="194" width="160" height="14" rx="7" fill="var(--soft)"/><rect x="330" y="194" width="160" height="14" rx="7" fill="var(--l2)"/>
+        <rect x="70" y="194" width="160" height="14" rx="7" fill="var(--soft)"/><rect x="150" y="194" width="80" height="14" rx="7" fill="var(--l2)"/>
+        <text class="tm" x="410" y="226" text-anchor="middle">100%</text>
+        <text class="tm" x="150" y="226" text-anchor="middle">כ־50%</text>
+        <text class="ts" x="410" y="252" text-anchor="middle">דמיון בתכונה (מתאם)</text>
+        <text class="ts" x="150" y="252" text-anchor="middle">דמיון בתכונה (מתאם)</text>
+        <rect x="330" y="260" width="160" height="14" rx="7" fill="var(--soft)"/><rect id="tw-mz" x="330" y="260" width="0" height="14" rx="7" fill="var(--spark)" style="transition:width .6s,x .6s"/>
+        <rect x="70" y="260" width="160" height="14" rx="7" fill="var(--soft)"/><rect id="tw-dz" x="70" y="260" width="0" height="14" rx="7" fill="var(--spark)" style="transition:width .6s,x .6s"/>
+        <text id="tw-mz-t" class="tm tb" x="410" y="294" text-anchor="middle"></text>
+        <text id="tw-dz-t" class="tm tb" x="150" y="294" text-anchor="middle"></text>
+      </svg>
+    </figure>
+    <div class="panel">
+      <div class="seg" id="tw-seg">
+        <button type="button" data-k="drayna" aria-pressed="true">מחקר שמיעת זיופים</button>
+        <button type="button" data-k="none" aria-pressed="false">מקרה דמיוני</button>
+      </div>
+      <div class="step-d" id="tw-text"></div>
+      <div>
+        <div class="lbl">תורשתיות</div>
+        <div class="meter" id="tw-meter"><i style="left:71%"></i></div>
+        <div class="meter-l"><span>0 · בעיקר סביבה</span><span>1 · בעיקר גנים</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="note">
+    <p><b>ההיגיון:</b> שני סוגי הזוגות גדלים יחד, באותו בית ובאותו זמן. ההבדל העיקרי ביניהם הוא כמה גנים הם חולקים. לכן, אם הזהים דומים יותר, לגנים יש חלק בתכונה. <span class="src mine">הסבר שלי</span></p>
+    <p><b>מחקרי אימוץ</b> עושים אותו דבר בדרך אחרת: משווים את הילד להורים הביולוגיים (גנים) ולמשפחה המאמצת (סביבה).</p>
+    <p><b>לא להתבלבל:</b> 0.67 ו־0.44 הם מתאמים. 0.71 היא התורשתיות שחושבה מהם. ותורשתיות גבוהה היא לא גורל: <span class="src book">ספר</span> הורים עם שמיעה מוזיקלית יכולים ללדת ילד בלי היכולת הזו, כמו שהורים חומי עיניים יכולים ללדת ילד כחול עיניים.</p>
+  </div>
+  <details class="check"><summary>בדיקה עצמית: תאומים זהים ולא־זהים דומים באותה מידה בתכונה מסוימת. מה נסיק?</summary><p>שהגנים כמעט לא מוסיפים דמיון: הזהים חולקים פי שניים גנים, ובכל זאת לא דומים יותר. התכונה מושפעת בעיקר מהסביבה, והתורשתיות שלה נמוכה, קרובה ל־0.</p></details>
+</section>
+
+<!-- ================= 3.2 ================= -->
+<div class="part"><span class="pn">3.2</span><h2>פעילות מערכת העצבים</h2><span class="pp">עמ' 106–118 · שאלות 8–23</span></div>
+
+<!-- ---------- הנוירון ---------- -->
+<section class="station" id="neuron">
+  <header class="st-head">
+    <div class="eyebrow"><span class="sec">3.2.1</span><span>שאלות 8–10, 14 · עמ' 106–109</span></div>
+    <h3 class="st">הנוירון: ארבעה חלקים, כיוון אחד</h3>
+    <p class="lead"><b>נוירון</b> (neuron) הוא תא עצב שמתמחה בקבלת מידע, בעיבוד שלו ובהעברה שלו לתאים אחרים. כל התנהגות נשענת על פעולת הנוירונים. לחצי "הבא" כדי לשלוח מסר דרך הנוירון, או על חלק בציור.</p>
+  </header>
+  <div class="lab" id="neuron-lab">
+    <figure class="fig">
+      <svg viewBox="0 0 640 250" role="img" aria-label="נוירון: דנדריטים, גוף התא, אקסון, כפתורים סופיים">
+        <defs><marker id="arr" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+        <path d="M600,18 L60,18" class="ln" marker-end="url(#arr)"/>
+        <text class="ts" x="330" y="12" text-anchor="middle">כיוון זרימת המידע</text>
+        <g data-part="1"><path data-id="dend" class="nr" d="M512,115 L566,74 L604,56 M566,74 L594,90 M514,106 L552,46 L578,30 M552,46 L586,50 M518,120 L578,144 L616,152 M578,144 L600,170 M512,124 L548,176 L566,196 M548,176 L582,186"/></g>
+        <g data-part="3">
+          <path data-id="axon" class="nr" d="M468,115 L112,115"/>
+          <g fill="var(--soft)" stroke="var(--tissue-line)" stroke-width="1.5">
+            <rect x="410" y="104" width="46" height="22" rx="11"/><rect x="350" y="104" width="46" height="22" rx="11"/><rect x="290" y="104" width="46" height="22" rx="11"/><rect x="230" y="104" width="46" height="22" rx="11"/><rect x="170" y="104" width="46" height="22" rx="11"/>
+          </g>
+          <path class="pulse" data-id="axon" pathLength="100" d="M468,115 L112,115"/>
+        </g>
+        <g data-part="2"><circle data-id="soma" class="nrf" cx="500" cy="115" r="32"/><circle cx="502" cy="113" r="11" fill="var(--tissue-line)" opacity=".55"/></g>
+        <g data-part="4">
+          <path data-id="term" class="nr" d="M112,115 L76,78 L56,64 M112,115 L60,115 M112,115 L76,152 L56,166"/>
+          <circle data-id="term" class="nrf" cx="50" cy="60" r="9"/><circle data-id="term" class="nrf" cx="50" cy="115" r="9"/><circle data-id="term" class="nrf" cx="50" cy="170" r="9"/>
+        </g>
+        <path d="M575,222 L575,200 M495,222 L495,150 M290,222 L290,130 M55,222 L55,182" class="ln" stroke-dasharray="2 3"/>
+        <text class="t tb" x="585" y="240" text-anchor="middle">דנדריטים</text>
+        <text class="t tb" x="495" y="240" text-anchor="middle">גוף התא</text>
+        <text class="t tb" x="290" y="240" text-anchor="middle">אקסון, עטוף במעטפת מיילין</text>
+        <text class="t tb" x="62" y="240" text-anchor="middle">כפתורים סופיים</text>
+      </svg>
+    </figure>
+    <div class="panel">
+      <div class="step-meta"><span class="step-n"></span><div class="dots"></div></div>
+      <h3 class="step-t"></h3>
+      <div class="step-d"></div>
+      <div class="ctrl"><button class="btn" data-act="prev" type="button">→ הקודם</button><button class="btn" data-act="play" type="button">הפעלה</button><button class="btn primary" data-act="next" type="button">הבא ←</button></div>
+    </div>
+  </div>
+
+  <div class="sub"><span class="ab">א</span>תאי גלייה <span class="star">★</span> (glia): צוות התמיכה (שאלה 14)</div>
+  <p class="lead" style="font-size:15px">במוח יש פי 5 עד 10 יותר תאי גלייה מנוירונים <span class="src book">ספר</span>. התפקיד העיקרי שלהם: <b>תמיכה</b>, להחזיק את הנוירונים במקום (glia ביוונית = דבק). ועוד ארבעה תפקידים:</p>
+  <div class="cards">
+    <div class="card"><h4>הכוונה</h4><p>מכוונים נוירונים שזה עתה נוצרו אל המקום שלהם במוח.</p></div>
+    <div class="card"><h4>ניקיון</h4><p>מנקים פסולת כשנוירונים נפגעים או מתים. סופגים עודפי נוירוטרנסמיטרים מהמרווחים.</p></div>
+    <div class="card"><h4>בידוד</h4><p>יוצרים את <b>מעטפת המיילין</b> <span class="star">★</span> סביב אקסונים, והיא מאיצה מאוד את ההולכה.</p></div>
+    <div class="card"><h4>הגנה מרעלים</h4><p><b>אסטרוציטים</b> <span class="star">★</span> יוצרים את <b>מחסום דם־מוח</b> <span class="star">★</span>: חומר שלא מסיס בשומן, ורעלים רבים הם כאלה, לא עובר.</p></div>
+  </div>
+  <details class="check"><summary>בדיקה עצמית: באיזה סדר עובר המידע בנוירון, ומה עושה כל חלק?</summary><p>דנדריטים (קולטים) ← גוף התא (משלב) ← אקסון (מוליך) ← כפתורים סופיים (מעבירים לנוירון הבא, לשריר או לבלוטה). תמיד בכיוון הזה.</p></details>
+</section>
+
+<!-- ---------- רפלקס ---------- -->
+<section class="station" id="reflex">
+  <header class="st-head">
+    <div class="eyebrow"><span class="sec">3.2.1</span><span>שאלות 11–13 · שאלה למחשבה 1 · עמ' 108–109</span></div>
+    <h3 class="st">רפלקס הרתיעה מול פעולה רצונית</h3>
+    <p class="lead">שלושה סוגי נוירונים עובדים יחד. השוואה בין שני מסלולים: ברפלקס <b>מוח השדרה</b> מחליט, ובפעולה רצונית <b>המוח</b> מחליט. <span class="src book">ספר</span> תרשים 3.7 · <span class="src guide">מדריך</span> ריויטל והפרח</p>
+  </header>
+  <div class="lab mode-reflex" id="reflex-lab">
+    <figure class="fig">
+      <svg viewBox="0 0 600 410" role="img" aria-label="מסלול עצבי בין היד, מוח השדרה והמוח">
+        <rect x="405" y="142" width="92" height="262" rx="34" fill="var(--soft)"/>
+        <rect x="443" y="130" width="18" height="276" rx="9" class="tissue"/>
+        <circle cx="452" cy="80" r="54" fill="var(--paper)" stroke="var(--muted)" stroke-width="1.6"/>
+        <path d="M399,84 L386,100 L400,104" fill="none" stroke="var(--muted)" stroke-width="1.6"/>
+        <ellipse data-id="brain" class="glow" cx="458" cy="72" rx="40" ry="30" fill="var(--tissue)" stroke="var(--tissue-line)" stroke-width="1.5"/>
+        <g class="arm">
+          <path d="M420,180 L280,222 L132,226" fill="none" stroke="var(--line)" stroke-width="32" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M420,180 L280,222 L132,226" fill="none" stroke="var(--soft)" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+          <ellipse cx="108" cy="226" rx="25" ry="17" fill="var(--soft)" stroke="var(--line)" stroke-width="2"/>
+          <ellipse data-id="muscle" class="dimk" cx="350" cy="200" rx="40" ry="12" transform="rotate(-17 350 200)" fill="var(--exc)"/>
+          <circle data-id="tip" class="dimk glow" cx="86" cy="226" r="6" fill="var(--chem)"/>
+          <g class="m-vol"><path d="M104,222 L84,176" stroke="var(--good)" stroke-width="3"/><g fill="var(--l2)"><circle cx="84" cy="160" r="7"/><circle cx="96" cy="168" r="7"/><circle cx="72" cy="168" r="7"/><circle cx="78" cy="180" r="6"/><circle cx="91" cy="180" r="6"/></g><circle cx="84" cy="170" r="5" fill="var(--spark)"/></g>
+        </g>
+        <polygon class="m-reflex" points="26,226 76,221 76,231" fill="var(--muted)"/>
+        <!-- מסלולים -->
+        <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path data-id="sens" class="dimk trav" pathLength="100" d="M90,218 L280,210 L410,174 L444,204" stroke="var(--chem)" stroke-width="4"/>
+          <path data-id="inter" class="dimk trav" pathLength="100" d="M447,206 C464,212 464,228 448,234" stroke="var(--inter)" stroke-width="4"/>
+          <path data-id="motor" class="dimk trav" pathLength="100" d="M444,238 L412,198 L362,206" stroke="var(--exc)" stroke-width="4"/>
+          <path data-id="up" class="dimk trav" pathLength="100" d="M457,200 L457,104" stroke="var(--chem)" stroke-width="3.5"/>
+          <path data-id="down" class="dimk trav" pathLength="100" d="M448,104 L448,204" stroke="var(--exc)" stroke-width="3.5"/>
+          <path data-id="nose" class="dimk trav" pathLength="100" d="M400,92 C410,86 420,80 432,76" stroke="var(--chem)" stroke-width="3.5"/>
+          <path data-id="sens" class="pulse" pathLength="100" d="M90,218 L280,210 L410,174 L444,204"/>
+          <path data-id="inter" class="pulse" pathLength="100" d="M447,206 C464,212 464,228 448,234"/>
+          <path data-id="motor" class="pulse" pathLength="100" d="M444,238 L412,198 L362,206"/>
+          <path data-id="up" class="pulse" pathLength="100" d="M457,200 L457,104"/>
+          <path data-id="down" class="pulse" pathLength="100" d="M448,104 L448,204"/>
+          <path data-id="nose" class="pulse" pathLength="100" d="M400,92 C410,86 420,80 432,76"/>
+        </g>
+        <text class="t tb" x="458" y="18" text-anchor="middle">המוח</text>
+        <text class="t tb" x="548" y="330" text-anchor="middle">מוח השדרה</text>
+        <path d="M512,324 L464,318" class="ln" stroke-dasharray="2 3"/>
+        <text class="ts" x="350" y="178" text-anchor="middle">שריר</text>
+        <text class="ts m-reflex" x="86" y="262" text-anchor="middle">קולטני כאב בעור</text>
+        <text class="ts m-vol" x="84" y="146" text-anchor="middle">פרח</text>
+        <g data-id="ouch" class="hidek"><rect x="512" y="40" width="72" height="30" rx="8" fill="var(--exc)"/><text class="t tb" x="548" y="60" text-anchor="middle" fill="#fff" style="fill:#fff">אוי!</text></g>
+        <g data-id="mem" class="hidek"><rect x="500" y="84" width="96" height="28" rx="8" fill="var(--paper)" stroke="var(--line)"/><text class="ts" x="548" y="103" text-anchor="middle">נשמר בזיכרון</text></g>
+      </svg>
+      <div class="leg"><span><i style="background:var(--chem)"></i>נוירון סנסורי (חישתי)</span><span><i style="background:var(--inter)"></i>אינטרנוירון</span><span><i style="background:var(--exc)"></i>נוירון מוטורי (תנועתי)</span></div>
+    </figure>
+    <div class="panel">
+      <div class="seg" id="reflex-mode">
+        <button type="button" data-m="reflex" aria-pressed="true">רפלקס: מסמר באצבע</button>
+        <button type="button" data-m="vol" aria-pressed="false">רצוני: ריויטל והפרח</button>
+      </div>
+      <div class="step-meta"><span class="step-n"></span><div class="dots"></div></div>
+      <h3 class="step-t"></h3>
+      <div class="step-d"></div>
+      <div class="ctrl"><button class="btn" data-act="prev" type="button">→ הקודם</button><button class="btn" data-act="play" type="button">הפעלה</button><button class="btn primary" data-act="next" type="button">הבא ←</button></div>
+      <div class="tl m-reflex" id="reflex-tl">
+        <span class="lbl">מה קורה קודם?</span>
+        <div class="bar"><span class="m" id="tl-move" style="right:4%;background:var(--exc);color:#fff">היד נרתעת</span><span class="m" id="tl-pain" style="right:54%;background:var(--chem);color:#fff">מרגישים כאב</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="cards">
+    <div class="card"><h4 style="color:var(--chem)">סנסורי <span class="star">★</span></h4><p>מקולטני החושים ← אל מערכת העצבים המרכזית. מביא מידע <b>פנימה</b>.</p></div>
+    <div class="card"><h4 style="color:var(--inter)">אינטרנוירון <span class="star">★</span></h4><p>מנוירון לנוירון. <b>מתווך</b>, ורוב הנוירונים במוח הם כאלה. <span class="src book">ספר</span> על כל נוירון מוטורי יש לפחות 5,000.</p></div>
+    <div class="card"><h4 style="color:var(--exc)">מוטורי <span class="star">★</span></h4><p>ממערכת העצבים המרכזית ← אל השרירים והבלוטות. מוציא <b>פקודה לפעולה</b>.</p></div>
+  </div>
+  <div class="note"><p><b>למה אין מודעות ושליטה לפני הרתיעה? (שאלה 13)</b> המעגל נסגר <b>במוח השדרה</b>: האינטרנוירון שם מפעיל ישירות את הנוירון המוטורי. המוח, שבו נוצרות התחושה המודעת וההחלטה, לא נמצא במעגל. הוא מקבל את המסר רק אחרי שהיד כבר זזה. כשההישרדות תלויה בתגובה מהירה, זה יתרון.</p></div>
+  <details class="check"><summary>בדיקה עצמית: מה ההבדל בין המסלול ברפלקס לבין המסלול אצל ריויטל?</summary><p>ברפלקס: עור ← סנסורי ← אינטרנוירון במוח השדרה ← מוטורי ← שריר, והמוח מתעדכן רק אחרי. אצל ריויטל: המוח מחליט קודם, והפקודה יורדת ממנו לשרירים. לכן היא מודעת לפעולה ושולטת בה.</p></details>
+</section>
+
+<!-- ---------- פוטנציאל פעולה ---------- -->
+<section class="station" id="ap">
+  <header class="st-head">
+    <div class="eyebrow"><span class="sec">3.2.2</span><span>שאלות 15–16 · לפי ההסבר של המדריך</span></div>
+    <h3 class="st">פוטנציאל פעולה: לירות או לא לירות</h3>
+    <p class="lead"><b>פוטנציאל פעולה <span class="star">★</span></b> (action potential), או "ירי", הוא דחף חשמלי שנוצר בנוירון ועובר לכל אורך האקסון. <span class="src guide">מדריך</span> את עמ' 110–112 בספר המדריך לא מטיל לקרוא, ולכן התחנה בנויה על ההסבר שלו.</p>
+  </header>
+
+  <div class="sub"><span class="ab">א</span>הנוירון מסכם קלטים ובודק סף</div>
+  <div class="lab" id="sum-lab">
+    <figure class="fig">
+      <svg viewBox="0 0 600 230" role="img" aria-label="נוירון שמקבל קלטים מעוררים ומעכבים">
+        <path class="nr" d="M392,120 L70,120"/>
+        <path id="fire-pulse" class="pulse" pathLength="100" d="M392,120 L70,120"/>
+        <g id="sum-inputs"></g>
+        <circle class="nrf" id="sum-soma" cx="430" cy="120" r="38"/>
+        <text class="tm tb" id="sum-val" x="430" y="126" text-anchor="middle">0</text>
+        <text class="ts" x="230" y="104" text-anchor="middle">אקסון</text>
+        <g id="sum-scope" transform="translate(70,150)">
+          <rect x="0" y="0" width="300" height="66" rx="8" fill="var(--soft)"/>
+          <path d="M10,46 L290,46" stroke="var(--line)" stroke-width="1.5"/>
+          <path d="M10,14 L290,14" stroke="var(--muted)" stroke-dasharray="3 4" stroke-width="1"/>
+          <text class="ts" x="150" y="11" text-anchor="middle" style="font-size:10.5px">גובה הירייה: תמיד אותו דבר</text>
+          <path id="sum-trace" d="M10,46 L290,46" fill="none" stroke="var(--spark)" stroke-width="2.4" stroke-linejoin="round"/>
+        </g>
+      </svg>
+    </figure>
+    <div class="panel">
+      <div class="lbl">לחצי על קלטים כדי להפעיל או לכבות אותם (גם בציור):</div>
+      <div class="chips" id="sum-chips"></div>
+      <div class="gauge-txt" id="sum-status"></div>
+      <div class="step-d" id="sum-text"></div>
+      <div class="ctrl"><button class="btn" id="sum-reset" type="button">איפוס</button></div>
+    </div>
+  </div>
+
+  <div class="sub"><span class="ab">ב</span>חוק הכול־או־לא־כלום <span class="star">★</span></div>
+  <div class="cards">
+    <div class="card"><h4>סף</h4><p>יורה רק אם סכום הגירוי <b>עובר את הסף</b>. מתחת לסף אין ירי.</p></div>
+    <div class="card"><h4>גודל קבוע</h4><p>יש ירייה או אין. אין "חצי ירייה" ואין "ירייה גדולה".</p></div>
+    <div class="card"><h4>עוצמה = תדירות</h4><p>גירוי חזק יותר = <b>יותר יריות בשנייה</b>, לא יריות גדולות יותר.</p></div>
+    <div class="card"><h4>כמו פתיל</h4><p>אחרי שנוצר, מתקדם בעצמו ושומר על אותו גודל עד סוף האקסון.</p></div>
+    <div class="card"><h4>כיוון אחד</h4><p>מהמקום שבו נוצר, לאורך האקסון, אל הכפתורים הסופיים.</p></div>
+    <div class="card"><h4>מהירות קבועה</h4><p>תלויה במבנה הסיב: מ־10 ס"מ בשנייה ועד 200 מטר בשנייה.</p></div>
+  </div>
+
+  <div class="sub"><span class="ab">ג</span>אז איך מרגישים כאב חזק או חלש? (טבלה 1 במדריך)</div>
+  <div class="lab" id="code-lab">
+    <figure class="fig">
+      <svg id="scope" viewBox="0 0 600 230" role="img" aria-label="רישום יריות של ארבעה נוירונים"></svg>
+      <div class="cap">כל קו הוא נוירון אחד, וכל קוץ הוא ירייה. כל הקוצים באותו גובה.</div>
+    </figure>
+    <div class="panel">
+      <div class="row"><span class="lbl">מוכן מראש:</span>
+        <div class="seg" id="code-preset">
+          <button type="button" data-p="none" aria-pressed="false">מתחת לסף</button>
+          <button type="button" data-p="light" aria-pressed="true">נגיעה קלה</button>
+          <button type="button" data-p="strong" aria-pressed="false">צביטה חזקה</button>
+        </div></div>
+      <div class="row"><span class="lbl">תדירות הירי:</span>
+        <div class="seg" id="code-f"><button type="button" data-v="0" aria-pressed="true">נמוכה</button><button type="button" data-v="1" aria-pressed="false">גבוהה</button></div></div>
+      <div class="row"><span class="lbl">מספר הנוירונים:</span>
+        <div class="seg" id="code-n"><button type="button" data-v="0" aria-pressed="true">מעט</button><button type="button" data-v="1" aria-pressed="false">הרבה</button></div></div>
+      <div class="feel"><span>תחושה:</span><div class="fb"><i id="feel-bar"></i></div><b id="feel-w">חלשה</b></div>
+      <div class="tbl-wrap" style="margin-top:0">
+        <table id="code-tbl"><tr><th></th><th>מעט נוירונים</th><th>הרבה נוירונים</th></tr>
+          <tr><th>תדירות נמוכה</th><td data-c="00">חלשה</td><td data-c="01">בינונית</td></tr>
+          <tr><th>תדירות גבוהה</th><td data-c="10">בינונית</td><td data-c="11">חזקה</td></tr></table>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub"><span class="ab">ד</span>מעטפת מיילין וטרשת נפוצה</div>
+  <div class="lab" id="myelin-lab">
+    <figure class="fig">
+      <svg viewBox="0 0 600 110" role="img" aria-label="דחף עובר לאורך אקסון">
+        <path class="nr" d="M570,55 L30,55"/>
+        <g id="myelin-segs"></g>
+        <circle id="my-dot" cx="570" cy="55" r="9" fill="var(--spark)" opacity="0"/>
+        <text class="ts" x="570" y="96" text-anchor="middle">גוף התא</text>
+        <text class="ts" x="40" y="96" text-anchor="middle">כפתורים סופיים</text>
+      </svg>
+    </figure>
+    <div class="panel">
+      <div class="seg" id="my-seg"><button type="button" data-v="ok" aria-pressed="true">מיילין תקין</button><button type="button" data-v="ms" aria-pressed="false">טרשת נפוצה</button></div>
+      <div class="ctrl"><button class="btn primary" id="my-go" type="button">שלחי דחף</button></div>
+      <div class="step-d" id="my-text"></div>
+    </div>
+  </div>
+  <details class="check"><summary>בדיקה עצמית (אתגר פיינמן): כל ירייה באותו גודל. אז איך המוח יודע שצביטה חזקה יותר מנגיעה?</summary><p>מגירוי חזק נוצרות יותר יריות בשנייה (תדירות), ויותר נוירונים יורים. המוח מתרגם את השילוב הזה לתחושה חזקה יותר. גודל הירייה עצמה לא משתנה.</p></details>
+</section>
+
+<!-- ---------- סינפסה ---------- -->
+<section class="station" id="synapse">
+  <header class="st-head">
+    <div class="eyebrow"><span class="sec">3.2.3</span><span>שאלות 17–19 · עמ' 113–115</span></div>
+    <h3 class="st">הולכה סינפטית: המסר חוצה את המרווח</h3>
+    <p class="lead">שני נוירונים כמעט אף פעם לא נוגעים זה בזה. בתוך הנוירון המסר <b>חשמלי</b>, ובין נוירונים הוא <b>כימי</b>. <span class="src book">ספר</span> תרשים 3.10</p>
+  </header>
+  <div class="lab" id="syn-lab">
+    <figure class="fig">
+      <svg id="syn" viewBox="0 0 600 380" role="img" aria-label="סינפסה: כפתור סופי, מרווח סינפטי וקולטנים">
+        <rect x="236" y="0" width="48" height="52" class="tissue"/>
+        <path class="tissue" d="M236,40 C150,48 112,110 122,170 L398,170 C408,110 370,48 284,40 Z"/>
+        <circle class="ap" cx="260" cy="6" r="9" fill="var(--spark)"/>
+        <path d="M122,170 L398,170" stroke="var(--tissue-line)" stroke-width="4"/>
+        <rect x="144" y="164" width="12" height="12" fill="var(--muted)"/><rect x="364" y="164" width="12" height="12" fill="var(--muted)"/>
+        <path class="tissue" d="M70,250 L450,250 L450,330 C380,352 140,352 70,330 Z"/>
+        <path d="M70,250 L450,250" stroke="var(--tissue-line)" stroke-width="4"/>
+        <g id="syn-rec"></g>
+        <g id="syn-ves"></g>
+        <g id="syn-ca"></g>
+        <g id="syn-nt"></g>
+        <g data-id="msg" class="hidek"><rect id="syn-msg-bg" x="200" y="286" width="120" height="34" rx="9" fill="var(--exc)"/><text id="syn-msg" class="t tb" x="260" y="308" text-anchor="middle" style="fill:#fff">ירה!</text></g>
+        <g data-id="clean" class="hidek"><text class="ts" x="330" y="214" text-anchor="middle">אנזים מפרק</text><text class="ts" x="196" y="200" text-anchor="middle">חוזר לכפתור</text></g>
+        <g class="t">
+          <path d="M455,100 L470,100 M402,170 L470,174 M455,210 L470,210 M455,250 L470,252 M455,310 L470,310" class="ln" stroke-dasharray="2 3"/>
+          <text x="532" y="104" text-anchor="middle">כפתור סופי</text>
+          <text x="532" y="178" text-anchor="middle" data-id="pre">ממברנה קדם־סינפטית</text>
+          <text x="532" y="214" text-anchor="middle">מרווח סינפטי</text>
+          <text x="532" y="256" text-anchor="middle">ממברנה בתר־סינפטית</text>
+          <text x="532" y="314" text-anchor="middle">הנוירון הקולט</text>
+        </g>
+      </svg>
+      <div class="leg"><span><i style="background:var(--chem)"></i>נוירוטרנסמיטר</span><span><i style="background:var(--l1)"></i>יוני סידן</span><span><i style="background:var(--muted)"></i>קולטן בצורה אחרת</span></div>
+    </figure>
+    <div class="panel">
+      <div class="row"><span class="lbl">הקולטנים בנוירון הקולט:</span>
+        <div class="seg" id="syn-type"><button type="button" data-v="exc" aria-pressed="true">מעוררים</button><button type="button" data-v="inh" aria-pressed="false">מעכבים</button></div></div>
+      <div class="step-meta"><span class="step-n"></span><div class="dots"></div></div>
+      <h3 class="step-t"></h3>
+      <div class="step-d"></div>
+      <div class="ctrl"><button class="btn" data-act="prev" type="button">→ הקודם</button><button class="btn" data-act="play" type="button">הפעלה</button><button class="btn primary" data-act="next" type="button">הבא ←</button></div>
+    </div>
+  </div>
+  <div class="tbl-wrap"><table>
+    <tr><th>מונח</th><th>מה הוא</th><th>איפה</th></tr>
+    <tr><td><b>שלפוחיות סינפטיות</b> <span class="star">★</span></td><td>שקיקים קטנים שמכילים נוירוטרנסמיטרים</td><td>בתוך הכפתור הסופי</td></tr>
+    <tr><td><b>נוירוטרנסמיטרים</b> <span class="star">★</span></td><td>חומרים ביוכימיים שמגרים נוירונים אחרים</td><td>בשלפוחיות, ואחר כך במרווח</td></tr>
+    <tr><td><b>מרווח סינפטי</b> <span class="star">★</span></td><td>הרווח עצמו</td><td>בין הכפתור הסופי לנוירון הבא</td></tr>
+    <tr><td><b>קולטנים</b> <span class="star">★</span></td><td>המקומות שהנוירוטרנסמיטר נקשר אליהם</td><td>בממברנה הבתר־סינפטית</td></tr>
+  </table></div>
+  <div class="note"><p><b>שני תנאים לקשירה:</b> אין חומר אחר שכבר תפוס בקולטן, והצורה מתאימה בדיוק, <b>כמו מפתח למנעול</b>. <b>מעורר או מעכב?</b> תלוי ב<b>קולטן</b>, לא בנוירוטרנסמיטר. החליפי בין "מעוררים" ל"מעכבים" וראי ששלב 7 משתנה.</p></div>
+  <details class="check"><summary>בדיקה עצמית: אותו נוירוטרנסמיטר מעורר בסינפסה אחת ומעכב באחרת. איך זה ייתכן?</summary><p>כי ההשפעה נקבעת בצד המקבל. הקולטן בממברנה הבתר־סינפטית הוא שקובע אם הקשירה תגרום ל"ירה!" או ל"אל תירה!".</p></details>
+</section>
+
+<!-- ---------- עיכוב של עיכוב ---------- -->
+<section class="station" id="chain">
+  <header class="st-head">
+    <div class="eyebrow"><span class="sec">3.2.3</span><span>שאלות למחשבה 2–3 במדריך</span></div>
+    <h3 class="st">שרשרת A–B–C–D: עיכוב של עיכוב</h3>
+    <p class="lead">A מעכב את B, ‏B מעכב את C, ‏C מעורר את D. כש־B לא מעוכב, הוא יורה. הפעילי וכבי את A, ועקבי מה קורה ל־D.</p>
+  </header>
+  <div class="lab">
+    <figure class="fig">
+      <svg id="chain-svg" viewBox="0 0 640 200" role="img" aria-label="ארבעה נוירונים בשרשרת">
+        <defs><marker id="arr-exc" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--exc)"/></marker></defs>
+        <g fill="none" stroke-width="4" stroke-linecap="round">
+          <path id="ln-ab" d="M524,100 L440,100" stroke="var(--inh)"/><path d="M440,84 L440,116" stroke="var(--inh)"/>
+          <path id="ln-bc" d="M364,100 L280,100" stroke="var(--inh)"/><path d="M280,84 L280,116" stroke="var(--inh)"/>
+          <path id="ln-cd" d="M204,100 L126,100" stroke="var(--exc)" marker-end="url(#arr-exc)"/>
+          <path id="pl-ab" class="pulse" pathLength="100" d="M524,100 L440,100"/>
+          <path id="pl-bc" class="pulse" pathLength="100" d="M364,100 L280,100"/>
+          <path id="pl-cd" class="pulse" pathLength="100" d="M204,100 L126,100"/>
+        </g>
+        <text class="ts" x="482" y="80" text-anchor="middle">מעכב</text>
+        <text class="ts" x="322" y="80" text-anchor="middle">מעכב</text>
+        <text class="ts" x="165" y="80" text-anchor="middle">מעורר</text>
+        <g id="chain-nodes"></g>
+      </svg>
+    </figure>
+    <div class="panel">
+      <div class="ctrl"><button class="btn primary" id="chain-a" type="button" aria-pressed="false">הפעילי את A</button></div>
+      <div class="step-d" id="chain-text"></div>
+    </div>
+  </div>
+  <div class="note"><p><b>המסקנה: עיכוב של עיכוב = עירור.</b> כמו בשפה: "לא נכון שאני לא בא" פירושו "אני בא". <span class="src mine">הדימוי: לא מהספר</span></p></div>
+  <details class="check"><summary>בדיקה עצמית: מה יקרה ל־D אם A מפסיק לירות?</summary><p>B כבר לא מעוכב ולכן יורה. B מעכב את C, ו־C משתתק. בלי C, ‏D לא מקבל עירור ונשאר שקט.</p></details>
+</section>
+
+<!-- ---------- נוירוטרנסמיטרים ---------- -->
+<section class="station" id="nt">
+  <header class="st-head">
+    <div class="eyebrow"><span class="sec">3.2.4</span><span>שאלה 20 · טבלה 2 במדריך · עמ' 115–118</span></div>
+    <h3 class="st">נוירוטרנסמיטרים: מי עושה מה</h3>
+    <p class="lead">בחרי נוירוטרנסמיטר כדי לראות את התפקיד שלו ומה קורה כשמשהו משתבש. אחר כך נסי את משחק ההתאמה.</p>
+  </header>
+  <div class="lab even">
+    <div class="panel">
+      <div class="chips" id="nt-chips"></div>
+      <div class="nt-panel" id="nt-info"></div>
+    </div>
+    <div class="panel quiz">
+      <div class="row" style="justify-content:space-between"><b>משחק התאמה: איזה נוירוטרנסמיטר?</b><span class="score" id="q-score"></span></div>
+      <div class="clue" id="q-clue"></div>
+      <div class="chips" id="q-opts"></div>
+      <div class="fb-msg" id="q-fb"></div>
+      <div class="ctrl"><button class="btn primary" id="q-next" type="button">רמז הבא ←</button></div>
+    </div>
+  </div>
+  <div class="note"><p><b>קטכולאמינים</b> <span class="star">★</span> = הקבוצה של <b>דופמין ונורפינפרין</b>. <b>נוירומודולטור</b> <span class="star">★</span> = חומר שמשנה את פעילות הנוירון הבתר־סינפטי, למשל האנדורפינים. <span class="src book">ספר</span> גם גזים (חד־תחמוצת הפחמן, תחמוצת החנקן) משמשים כנוירוטרנסמיטרים: הם לא נקשרים לקולטנים, אלא עוברים אל תוך הנוירון.</p></div>
+  <details class="check"><summary>בדיקה עצמית: איך ואליום מפחית חרדה?</summary><p>הוא מגביר את פעולת הגאבא, המעכב הנפוץ ביותר במוח. הוא לא נקשר במקום הגאבא, אלא עוזר לו להיקשר ביעילות. כך הפעילות העצבית העודפת שקשורה לחרדה נרגעת.</p></details>
+</section>
+
+<!-- ---------- זה גנטי ---------- -->
+<section class="station" id="impulse">
+  <header class="st-head">
+    <div class="eyebrow"><span class="sec">3.2.4</span><span>שאלות 21–23 · חשיבה ביקורתית, עמ' 118</span></div>
+    <h3 class="st">"גן האימפולסיביות"? השרשרת שבאמצע</h3>
+    <p class="lead">כותרת בעיתון: "מדענים גילו את גן האימפולסיביות". הגן לא יוצר התנהגות ישירות. לחצי "הבא" כדי לעבור על השרשרת.</p>
+  </header>
+  <div class="lab" id="imp-lab">
+    <figure class="fig">
+      <div class="chainbox" style="display:grid;gap:8px">
+        <div class="card cbox" data-id="g1"><h4>1 · וריאציה בגן</h4><p>למשל DRD4 או COMT</p></div>
+        <div class="lbl" style="text-align:center">↓</div>
+        <div class="card cbox" data-id="g2"><h4>2 · רמת הפעילות של הדופמין</h4><p>במוח</p></div>
+        <div class="lbl" style="text-align:center">↓</div>
+        <div class="card cbox" data-id="g3"><h4>3 · תכנון, יציבות וגמישות קוגניטיבית</h4><p>תפקודים שתלויים בדופמין</p></div>
+        <div class="lbl" style="text-align:center">↓</div>
+        <div class="card cbox" data-id="g4"><h4>4 · התנהגות</h4><p>אימפולסיבית יותר או פחות</p></div>
+      </div>
+    </figure>
+    <div class="panel">
+      <div class="step-meta"><span class="step-n"></span><div class="dots"></div></div>
+      <h3 class="step-t"></h3>
+      <div class="step-d"></div>
+      <div class="ctrl"><button class="btn" data-act="prev" type="button">→ הקודם</button><button class="btn" data-act="play" type="button">הפעלה</button><button class="btn primary" data-act="next" type="button">הבא ←</button></div>
+      <div class="seg" id="imp-head"><button type="button" data-v="0" aria-pressed="true">הכותרת בעיתון</button><button type="button" data-v="1" aria-pressed="false">כותרת מדויקת</button></div>
+      <div class="note" id="imp-head-t" style="margin-top:0"></div>
+    </div>
+  </div>
+  <div class="sub"><span class="ab">א</span>מה בדיוק נמדד? הגדרה אופרציונלית (שאלות 21–22)</div>
+  <div class="cards">
+    <div class="card"><h4>מי שלא מתכנן מראש</h4><p>אחת המשמעויות של "אימפולסיבי".</p></div>
+    <div class="card"><h4>מי שלא מצליח לעצור התפרצויות</h4><p>משמעות שנייה.</p></div>
+    <div class="card"><h4>מי שלוקח יותר מדי סיכונים</h4><p>משמעות שלישית. לכל אחת ייתכן בסיס גנטי אחר.</p></div>
+  </div>
+  <div class="note">
+    <p><b>בדיון בספר</b> "אימפולסיביות" מצטמצמת לקושי בתכנון ובשמירה על יציבות וגמישות קוגניטיבית, ומקושרת לרמת הפעילות של הדופמין. <span class="src mine">הניתוח שלי, לפי עמ' 118</span></p>
+    <p><b>החיבור לפרק 2:</b> כל משתנה מופשט צריך <b>הגדרה אופרציונלית</b>. שתי הגדרות שמודדות דברים שונים: "כמה פעמים מתוך 20 המשתתפת בוחרת 50 ש"ח עכשיו במקום 100 ש"ח בעוד חודש" (חוסר תכנון), מול "כמה פעמים מתוך 20 היא בוחרת הימור על 100 ש"ח במקום 40 ש"ח בטוחים" (לקיחת סיכונים). <span class="src mine">הדוגמאות: לא מהספר</span></p>
+  </div>
+  <details class="check"><summary>בדיקה עצמית: למה צריך להגדיר "אימפולסיביות" לפני שמחפשים לה גן?</summary><p>כי בלי הגדרה מדויקת כל חוקר מודד דבר אחר. אז אי אפשר להשוות בין מחקרים, ואפשר לחפש "גן אחד" לכמה התנהגויות שונות, שלכל אחת אולי בסיס גנטי אחר.</p></details>
+</section>
+
+<!-- ================= 3.3 ================= -->
+<div class="part"><span class="pn">3.3</span><h2>ביולוגיה והתנהגות: המוח</h2><span class="pp">עמ' 119–143 · שאלות 24–37</span></div>
+
+<!-- ---------- שיטות ---------- -->
+<section class="station" id="methods">
+  <header class="st-head">
+    <div class="eyebrow"><span class="sec">3.3.1</span><span>שאלות 24–25 · עמ' 119–123</span></div>
+    <h3 class="st">איך חוקרים את המוח</h3>
+    <p class="lead">המטרה: לקשר בין <b>אזור במוח</b> לבין <b>תפקוד או התנהגות</b>. יש שתי משפחות של שיטות. בהתערבות <b>משנים</b> משהו במוח. ברישום והדמיה <b>רק מודדים</b>. לחצי על שיטה כדי לקרוא עליה.</p>
+  </header>
+  <div class="lab even">
+    <div class="panel">
+      <div class="lbl"><b>התערבויות במוח</b>: פוגעים, משביתים או מגרים</div>
+      <div class="chips" id="m-int"></div>
+      <div class="lbl"><b>רישום והדמיה</b>: לא משנים כלום, רק מודדים</div>
+      <div class="chips" id="m-rec"></div>
+      <div class="note" id="m-info" style="margin-top:4px"></div>
+    </div>
+    <div class="panel quiz">
+      <div class="row" style="justify-content:space-between"><b>איזו שיטה לאיזו שאלה? (שאלה 25)</b><span class="score" id="mq-score"></span></div>
+      <div class="clue" id="mq-clue"></div>
+      <div class="chips" id="mq-opts"></div>
+      <div class="fb-msg" id="mq-fb"></div>
+      <div class="ctrl"><button class="btn primary" id="mq-next" type="button">שאלה הבאה ←</button></div>
+      <div class="lbl"><span class="src guide">מדריך</span> לפעמים מתאימות כמה שיטות.</div>
+    </div>
+  </div>
+  <details class="check"><summary>בדיקה עצמית: מה ההבדל בין MRI ל־fMRI?</summary><p>MRI מראה איך המוח <b>בנוי</b> (מבנה), בתמונה המפורטת ביותר. fMRI מוסיף מה המוח <b>עושה</b> (תפקוד): הוא מגלה שינויים בזרימת הדם לתאים פעילים. ה־f היא functional, תפקודי.</p></details>
+</section>
+
+<!-- ---------- מערכת העצבים ---------- -->
+<section class="station" id="ns">
+  <header class="st-head">
+    <div class="eyebrow"><span class="sec">3.3.2</span><span>שאלה 26 · עמ' 123–126</span></div>
+    <h3 class="st">מערכת העצבים: מי אחראי על מה</h3>
+    <p class="lead">לחצי על כל חלק בעץ כדי לקרוא עליו. אחר כך החליפי בין חירום לשגרה, וראי איך שני הענפים של המערכת האוטונומית פועלים בכיוונים מנוגדים.</p>
+  </header>
+  <div class="lab">
+    <figure class="fig">
+      <svg id="ns-tree" viewBox="0 0 720 280" role="img" aria-label="עץ מערכת העצבים"></svg>
+    </figure>
+    <div class="panel"><div class="nt-panel" id="ns-info"></div></div>
+  </div>
+  <div class="sub"><span class="ab">א</span>סימפטטית מול פרסימפטטית (תרשים 3.15)</div>
+  <div class="panel">
+    <div class="row">
+      <div class="seg" id="ans-seg"><button type="button" data-v="sym" aria-pressed="true">חירום: ענף סימפטטי</button><button type="button" data-v="para" aria-pressed="false">שגרה: ענף פרסימפטטי</button></div>
+    </div>
+    <div class="step-d" id="ans-text" style="min-height:0"></div>
+    <div class="tiles" id="ans-tiles"></div>
+  </div>
+  <details class="check"><summary>בדיקה עצמית: למה בזמן סכנה העיכול נעצר?</summary><p>הענף הסימפטטי מכין את הגוף ללחימה או למנוסה: הדם עובר מהאיברים הפנימיים לשרירים, הלב מאיץ, והעיכול מחכה. כשהסכנה חולפת, הענף הפרסימפטטי מחזיר את השגרה.</p></details>
+</section>
+
+<!-- ---------- מבני המוח ---------- -->
+<section class="station" id="brain">
+  <header class="st-head">
+    <div class="eyebrow"><span class="sec">3.3.3</span><span>שאלות 27–30 · עמ' 127–133</span></div>
+    <h3 class="st">המוח בשלוש שכבות</h3>
+    <p class="lead">בפנים התפקודים הבסיסיים, ובחוץ התפקודים הגבוהים. בחרי שכבה או לחצי על מבנה. במבט מהצד רואים את ארבע האונות של קליפת המוח.</p>
+  </header>
+  <div class="lab">
+    <figure class="fig">
+      <div class="row" style="margin-bottom:8px">
+        <div class="seg" id="br-view"><button type="button" data-v="med" aria-pressed="true">חתך באמצע: השכבות</button><button type="button" data-v="lat" aria-pressed="false">מבט מהצד: האונות</button></div>
+      </div>
+      <svg id="br" class="brain-svg" viewBox="0 0 600 440" data-layer="0" role="img" aria-label="מבני המוח">
+        <defs><clipPath id="cl-brain"><path d="M78,214 C56,140 112,58 214,40 C318,22 450,36 516,98 C566,146 566,226 528,262 C500,288 458,292 424,282 C398,290 372,292 350,288 C318,300 268,312 214,306 C168,302 132,286 116,262 C100,246 84,236 78,214 Z"/></clipPath></defs>
+        <text class="ts" x="72" y="24" text-anchor="middle">← קדימה (מצח)</text>
+        <text class="ts" x="540" y="24" text-anchor="middle">אחורה (עורף) →</text>
+        <!-- חתך -->
+        <g id="view-med">
+          <path data-s="cerebrum" class="bs l3" d="M78,214 C56,140 112,58 214,40 C318,22 450,36 516,98 C566,146 566,226 528,262 C500,288 458,292 424,282 C398,290 372,292 350,288 C318,300 268,312 214,306 C168,302 132,286 116,262 C100,246 84,236 78,214 Z"/>
+          <path data-s="cc" class="bs l3 cc" d="M196,178 C230,128 380,122 430,170"/>
+          <ellipse data-s="cerebellum" class="bs l1" cx="455" cy="312" rx="62" ry="36"/>
+          <path d="M405,300 q20,-10 40,0 t40,0 M410,318 q20,-10 40,0 t40,0" fill="none" stroke="var(--l1)" stroke-width="1" pointer-events="none"/>
+          <path data-s="brainstem" class="bs l1" d="M318,218 C322,240 330,262 334,280 L374,280 C370,258 360,236 350,216 Z"/>
+          <ellipse data-s="pons" class="bs l1" cx="356" cy="296" rx="26" ry="20"/>
+          <path data-s="medulla" class="bs l1" d="M338,312 C340,340 344,370 346,400 L370,400 C370,370 372,340 376,312 Z"/>
+          <rect x="346" y="400" width="24" height="36" rx="6" fill="var(--soft)" stroke="var(--line)"/>
+          <path data-s="reticular" class="bs l1 ret" d="M336,226 C342,262 352,300 358,372"/>
+          <ellipse data-s="thalamus" class="bs l1" cx="318" cy="200" rx="34" ry="20"/>
+          <ellipse data-s="hypothalamus" class="bs l2" cx="276" cy="232" rx="18" ry="11"/>
+          <path d="M272,242 L266,256" stroke="var(--muted)" stroke-width="2"/>
+          <circle data-s="pituitary" class="bs pit" cx="264" cy="263" r="8"/>
+          <path data-s="hippocampus" class="bs l2 hip" d="M312,262 C340,262 368,252 384,232 C392,222 386,212 376,216"/>
+          <ellipse data-s="amygdala" class="bs l2" cx="300" cy="262" rx="12" ry="9"/>
+          <g class="t" pointer-events="none" style="font-size:12px">
+            <text x="312" y="116" text-anchor="middle">כפיס המוח</text>
+            <text x="318" y="205" text-anchor="middle">תלמוס</text>
+            <text x="222" y="228" text-anchor="middle">היפותלמוס</text>
+            <text x="212" y="270" text-anchor="middle">יותרת המוח</text>
+            <text x="292" y="294" text-anchor="middle">אמיגדלה</text>
+            <text x="444" y="214" text-anchor="middle">היפוקמפוס</text>
+            <text x="300" y="320" text-anchor="middle">גשר</text>
+            <text x="300" y="362" text-anchor="middle">מוח מוארך</text>
+            <text x="455" y="345" text-anchor="middle">מוחון</text>
+            <text x="424" y="386" text-anchor="middle">תצורת הרשת</text>
+            <text x="300" y="430" text-anchor="middle">מוח השדרה</text>
+          </g>
+          <path d="M396,382 L360,366" class="ln" stroke-dasharray="2 3" pointer-events="none"/>
+        </g>
+        <!-- מבט מהצד -->
+        <g id="view-lat" hidden>
+          <ellipse data-s="cerebellum" class="bs l1" cx="455" cy="312" rx="62" ry="36"/>
+          <path d="M405,300 q20,-10 40,0 t40,0 M410,318 q20,-10 40,0 t40,0" fill="none" stroke="var(--l1)" stroke-width="1" pointer-events="none"/>
+          <path data-s="brainstem" class="bs l1" d="M332,272 C330,320 340,370 346,430 L376,430 C372,372 372,320 378,272 Z"/>
+          <g clip-path="url(#cl-brain)">
+            <polygon data-s="frontal" class="bs lobe lf" points="0,0 318,0 318,20 312,60 298,120 282,175 266,222 180,236 100,250 0,262"/>
+            <polygon data-s="parietal" class="bs lobe lp" points="318,0 468,0 464,90 456,170 452,246 410,218 340,214 266,222 282,175 298,120 312,60 318,20"/>
+            <polygon data-s="temporal" class="bs lobe lt" points="0,262 100,250 180,236 266,222 340,214 410,218 452,246 452,440 0,440"/>
+            <polygon data-s="occipital" class="bs lobe lo" points="468,0 600,0 600,440 452,440 452,246 456,170 464,90"/>
+            <g class="areas">
+              <polygon data-s="motor" class="bs area" points="296,0 290,60 276,120 260,175 244,226 266,222 282,175 298,120 312,60 318,20 318,0"/>
+              <polygon data-s="somato" class="bs area" points="318,0 318,20 312,60 298,120 282,175 266,222 290,219 304,175 320,120 334,60 340,20 340,0"/>
+              <ellipse data-s="broca" class="bs area" cx="205" cy="212" rx="26" ry="14"/>
+              <ellipse data-s="auditory" class="bs area" cx="318" cy="232" rx="30" ry="9"/>
+              <ellipse data-s="wernicke" class="bs area" cx="400" cy="240" rx="24" ry="13"/>
+              <ellipse data-s="visual" class="bs area" cx="548" cy="196" rx="30" ry="48"/>
+            </g>
+          </g>
+          <path d="M78,214 C56,140 112,58 214,40 C318,22 450,36 516,98 C566,146 566,226 528,262 C500,288 458,292 424,282 C398,290 372,292 350,288 C318,300 268,312 214,306 C168,302 132,286 116,262 C100,246 84,236 78,214 Z" fill="none" stroke="var(--muted)" stroke-width="2" pointer-events="none"/>
+          <polyline points="318,24 312,60 298,120 282,175 266,222" fill="none" stroke="var(--ink)" stroke-width="2.5" pointer-events="none"/>
+          <polyline points="100,250 180,236 266,222 340,214 410,218 452,246" fill="none" stroke="var(--ink)" stroke-width="2.5" pointer-events="none"/>
+          <g class="t tb" pointer-events="none">
+            <text x="175" y="140" text-anchor="middle">אונת המצח</text>
+            <text x="392" y="112" text-anchor="middle">אונת הקדקוד</text>
+            <text x="505" y="128" text-anchor="middle">אונת העורף</text>
+            <text x="258" y="276" text-anchor="middle">אונת הרקה</text>
+            <text x="455" y="318" text-anchor="middle" style="font-weight:400">מוחון</text>
+            <text x="410" y="414" text-anchor="middle" style="font-weight:400">גזע המוח</text>
+          </g>
+          <g class="t area-l" pointer-events="none" style="font-size:11.5px">
+            <text x="246" y="62" text-anchor="middle">קורטקס מוטורי</text>
+            <text x="392" y="62" text-anchor="middle">סומטו־סנסורי</text>
+            <text x="205" y="192" text-anchor="middle">ברוקה</text>
+            <text x="318" y="257" text-anchor="middle">שמע</text>
+            <text x="404" y="270" text-anchor="middle">ורניקה</text>
+            <text x="548" y="200" text-anchor="middle">ראייה</text>
+          </g>
+          <g class="ts" pointer-events="none"><text x="250" y="20" text-anchor="middle">המענית המרכזית ↓</text><text x="100" y="272" text-anchor="middle">החריץ הצדי</text></g>
+        </g>
+      </svg>
+      <div class="cap">תרשים סכמטי, לא בקנה מידה. <span class="src mine">הציור: לא מהספר</span></div>
+    </figure>
+    <div class="panel">
+      <div class="lbl">הדגשת שכבה:</div>
+      <div class="seg" id="br-layer"><button type="button" data-v="0" aria-pressed="true">הכול</button><button type="button" data-v="1" aria-pressed="false">I גזע המוח</button><button type="button" data-v="2" aria-pressed="false">II לימבית</button><button type="button" data-v="3" aria-pressed="false">III המוח הגדול</button></div>
+      <div class="row" id="br-areas-row" hidden><button class="btn" id="br-areas" type="button" aria-pressed="false">הראי אזורים תפקודיים</button></div>
+      <div class="nt-panel" id="br-info"></div>
+    </div>
+  </div>
+  <div class="tbl-wrap"><table>
+    <tr><th></th><th>שכבה</th><th>המבנים</th><th>תפקיד מרכזי</th></tr>
+    <tr><td class="num">I</td><td><b>גזע המוח, תלמוס ומוחון</b><br><span class="lbl">הכי עמוק</span></td><td>מוח מוארך, גשר, תצורת הרשת, תלמוס, מוחון</td><td>תהליכי חיים בסיסיים: נשימה, דופק, עוררות, תנועה</td></tr>
+    <tr><td class="num">II</td><td><b>המערכת הלימבית</b><br><span class="lbl">באמצע. רק אצל יונקים</span></td><td>היפוקמפוס, אמיגדלה, היפותלמוס</td><td>מוטיבציה, רגש וזיכרון. איזון פנימי</td></tr>
+    <tr><td class="num">III</td><td><b>המוח הגדול</b><br><span class="lbl">בחוץ. כשני שלישים מהמסה</span></td><td>שתי המיספרות, כפיס המוח, קליפת המוח וארבע אונות</td><td>חשיבה, תכנון, ארגון מידע חושי. כאן התודעה</td></tr>
+  </table></div>
+  <div class="note">
+    <p><b>ראשי תיבות מהמדריך</b> <span class="src guide">מדריך</span>: שכבה I = <b>ת"ג מ"מ</b> (תצורת הרשת, גשר, מוח מוארך, מוח קטן). שכבה II = <b>אהה</b> (אמיגדלה, היפותלמוס, היפוקמפוס), והיא אחראית על <b>זר"מ</b> (זיכרון, רגשות, מוטיבציה).</p>
+    <p><b>שלושה עקרונות בקורטקס המוטורי והסומטו־סנסורי</b> <span class="src book">ספר</span>: (1) <b>מוצלב</b>: צד ימין של המוח קשור לצד שמאל של הגוף. (2) <b>הפוך</b>: החלק העליון של הקורטקס קשור לכפות הרגליים. (3) <b>השטח לפי הדיוק</b>: לאצבעות, לשפתיים וללשון יש שטח גדול.</p>
+  </div>
+  <details class="check"><summary>בדיקה עצמית: מה היה פגוע אצל המטופל ה"מ (H.M.), ומה זה לימד?</summary><p>הוסרו חלקים מההיפוקמפוס שלו. אחר כך הוא זכר את העבר הרחוק, אבל לא הצליח לאחסן מידע חדש בזיכרון לטווח ארוך. כלומר, ההיפוקמפוס חיוני לרכישת זיכרונות חדשים. הוא עדיין למד מיומנויות חדשות, ולכן יש סוגי זיכרון שלא תלויים בהיפוקמפוס.</p></details>
+</section>
+
+<!-- ---------- חצויי מוח ---------- -->
+<section class="station" id="split">
+  <header class="st-head">
+    <div class="eyebrow"><span class="sec">3.3.4</span><span>שאלה 31 · שאלה למחשבה 4 · עמ' 134–137</span></div>
+    <h3 class="st">חצויי מוח: ניסוי האגס</h3>
+    <p class="lead">אצל <b>חצויי מוח</b> <span class="star">★</span> נותק <b>כפיס המוח</b>, הגשר בין שתי ההמיספרות (ניתוח לחולי אפילפסיה קשה). רוג'ר ספרי (Roger Sperry) ומייקל גזניגה (Michael Gazzaniga) הציגו מידע לכל המיספרה בנפרד. החוק: <b>הכול מוצלב</b>. בחרי איפה להציג את התמונה ואיזו יד מחפשת.</p>
+  </header>
+  <div class="lab">
+    <figure class="fig">
+      <svg id="sp" viewBox="0 0 600 470" role="img" aria-label="ניסוי חצוי מוח: מסך, שתי המיספרות ושתי ידיים">
+        <rect x="110" y="14" width="380" height="72" rx="8" fill="var(--soft)" stroke="var(--line)"/>
+        <path d="M300,18 L300,82" stroke="var(--muted)" stroke-dasharray="3 4"/>
+        <circle cx="300" cy="50" r="4" fill="var(--ink)"/>
+        <g id="sp-img"></g>
+        <text class="ts" x="195" y="104" text-anchor="middle">שדה הראייה השמאלי</text>
+        <text class="ts" x="405" y="104" text-anchor="middle">שדה הראייה הימני</text>
+        <ellipse cx="300" cy="252" rx="112" ry="120" fill="var(--paper)" stroke="var(--muted)" stroke-width="1.6"/>
+        <circle cx="262" cy="148" r="8" fill="var(--muted)"/><circle cx="338" cy="148" r="8" fill="var(--muted)"/>
+        <path id="hemL" class="hem" d="M292,162 C230,162 205,212 205,252 C205,302 235,350 292,352 Z"/>
+        <path id="hemR" class="hem" d="M308,162 C370,162 395,212 395,252 C395,302 365,350 308,352 Z"/>
+        <text class="t tb" x="250" y="246" text-anchor="middle" style="font-size:12px">המיספרה</text>
+        <text class="t tb" x="250" y="262" text-anchor="middle" style="font-size:12px">שמאלית</text>
+        <text class="t tb" x="350" y="246" text-anchor="middle" style="font-size:12px">המיספרה</text>
+        <text class="t tb" x="350" y="262" text-anchor="middle" style="font-size:12px">ימנית</text>
+        <g><rect x="222" y="288" width="56" height="20" rx="6" fill="var(--paper)" stroke="var(--line)"/><text class="ts" x="250" y="302" text-anchor="middle">דיבור</text></g>
+        <g id="cc-ok"><rect x="293" y="222" width="14" height="60" rx="4" fill="var(--l3)"/></g>
+        <g id="cc-cut"><rect x="293" y="222" width="14" height="22" rx="4" fill="var(--l3)"/><rect x="293" y="260" width="14" height="22" rx="4" fill="var(--l3)"/><path d="M288,246 L312,258 M312,246 L288,258" stroke="var(--bad)" stroke-width="3"/></g>
+        <g fill="none" stroke-width="4" stroke-linecap="round">
+          <path id="vp-L" class="sp-path" pathLength="100" d="M195,88 C222,130 300,150 352,214" stroke="var(--spark)"/>
+          <path id="vp-R" class="sp-path" pathLength="100" d="M405,88 C378,130 300,150 248,214" stroke="var(--spark)"/>
+          <path id="cc-path" class="sp-path" pathLength="100" d="M330,252 L270,252" stroke="var(--l3)"/>
+          <path id="hp-L" class="sp-path" pathLength="100" d="M350,332 C320,382 230,392 200,404" stroke="var(--exc)"/>
+          <path id="hp-R" class="sp-path" pathLength="100" d="M250,332 C280,382 370,392 400,404" stroke="var(--exc)"/>
+        </g>
+        <ellipse id="hand-L" class="hand" cx="185" cy="420" rx="30" ry="18"/>
+        <ellipse id="hand-R" class="hand" cx="415" cy="420" rx="30" ry="18"/>
+        <text class="ts" x="185" y="458" text-anchor="middle">יד שמאל</text>
+        <text class="ts" x="415" y="458" text-anchor="middle">יד ימין</text>
+        <g id="sp-held"></g>
+        <g id="sp-say" opacity="0"><rect x="448" y="150" width="140" height="40" rx="10" fill="var(--paper)" stroke="var(--ink)"/><path d="M460,190 L446,204 L474,190" fill="var(--paper)" stroke="var(--ink)"/><text id="sp-say-t" class="t tb" x="518" y="175" text-anchor="middle"></text></g>
+      </svg>
+    </figure>
+    <div class="panel">
+      <div class="row"><span class="lbl">התמונה:</span><div class="seg" id="sp-field"><button type="button" data-v="L" aria-pressed="true">בשדה השמאלי</button><button type="button" data-v="R" aria-pressed="false">בשדה הימני</button></div></div>
+      <div class="row"><span class="lbl">מחפש ביד:</span><div class="seg" id="sp-hand"><button type="button" data-v="L" aria-pressed="true">שמאל</button><button type="button" data-v="R" aria-pressed="false">ימין</button></div></div>
+      <div class="row"><span class="lbl">כפיס המוח:</span><div class="seg" id="sp-cc"><button type="button" data-v="cut" aria-pressed="true">מנותק</button><button type="button" data-v="ok" aria-pressed="false">שלם</button></div></div>
+      <div class="ctrl"><button class="btn primary" id="sp-run" type="button">הריצי את הניסוי</button></div>
+      <div class="step-d" id="sp-text"></div>
+    </div>
+  </div>
+  <div class="tbl-wrap"><table>
+    <tr><th></th><th>המיספרה שמאלית</th><th>המיספרה ימנית</th></tr>
+    <tr><th>סגנון</th><td><b>אנליטי</b>: פריט אחרי פריט, פרטים</td><td><b>הוליסטי</b>: התמונה השלמה</td></tr>
+    <tr><th>שפה</th><td>דיבור (אצל רוב האנשים), גם שפת סימנים</td><td>לא מדברת</td></tr>
+    <tr><th>בעיות</th><td>רוב פתרון הבעיות הרגיל</td><td>פתרון יצירתי ו<b>תובנה</b></td></tr>
+  </table></div>
+  <div class="note">
+    <p><b>שלג ותרנגולת</b> <span class="src book">ספר</span>: להמיספרה הימנית הוצג נוף מושלג, ולשמאלית טפר של תרנגולת. יד ימין בחרה ראש תרנגולת, ויד שמאל בחרה אֵת. למה אֵת? "כדי לנקות את הלול". ההמיספרה השמאלית, שמדברת, לא ידעה על השלג, ולכן <b>המציאה הסבר</b>.</p>
+    <p><b>צדיות</b> <span class="star">★</span> (lateralization) = המיספרה אחת עושה את התפקיד המרכזי בפונקציה מסוימת. השמאלית לא "טובה יותר". לכל צד סגנון משלו, והשילוב נותן חוויה מלאה.</p>
+  </div>
+  <details class="check"><summary>בדיקה עצמית: חצוי מוח רואה מילה בשדה הראייה השמאלי. יוכל לקרוא אותה בקול? מה כן יוכל לעשות?</summary><p>לא. המילה מגיעה רק להמיספרה הימנית, והדיבור נמצא בשמאלית. אבל ביד שמאל, שקשורה להמיספרה הימנית, הוא יוכל לבחור את החפץ שהמילה מתארת.</p></details>
+</section>
+
+<!-- ---------- אנדוקרינית ---------- -->
+<section class="station" id="endo">
+  <header class="st-head">
+    <div class="eyebrow"><span class="sec">3.3.5</span><span>שאלות 32–33 · עמ' 137–139</span></div>
+    <h3 class="st">המערכת האנדוקרינית: מסרים בדם</h3>
+    <p class="lead">עד עכשיו המוח שלט בגוף דרך <b>עצבים</b>. כאן יש מערכת שנייה: <b>הורמונים</b> <span class="star">★</span>, שליחים כימיים שבלוטות מפרישות לדם. הדוגמה של המדריך: ייצור חלב בהיריון.</p>
+  </header>
+  <div class="lab" id="endo-lab">
+    <figure class="fig">
+      <svg id="endo" viewBox="0 0 600 300" role="img" aria-label="הורמונים עוברים בדם ומגיעים לתאי יעד">
+        <circle cx="92" cy="80" r="58" fill="var(--paper)" stroke="var(--muted)" stroke-width="1.6"/>
+        <ellipse cx="94" cy="70" rx="42" ry="30" fill="var(--tissue)" stroke="var(--tissue-line)"/>
+        <ellipse data-id="hyp" class="dimk glow" cx="98" cy="90" rx="11" ry="6" fill="var(--l2)"/>
+        <circle data-id="pit" class="dimk glow" cx="92" cy="110" r="7" fill="var(--l2)"/>
+        <path d="M150,66 L112,88 M150,112 L102,110" class="ln" stroke-dasharray="2 3"/>
+        <text class="ts" x="196" y="70" text-anchor="middle">היפותלמוס</text>
+        <text class="ts" x="196" y="116" text-anchor="middle">יותרת המוח</text>
+        <path id="vessel" d="M92,118 L92,236 L580,236" fill="none" stroke="var(--bad)" stroke-opacity=".28" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+        <text class="ts" x="330" y="262" text-anchor="middle">כלי דם</text>
+        <g id="endo-cells"></g>
+        <g data-id="preg" class="hidek"><rect x="236" y="20" width="150" height="32" rx="8" fill="var(--soft)"/><text class="t" x="311" y="41" text-anchor="middle">היריון: רמות ההורמונים משתנות</text></g>
+        <g data-id="milk" class="hidek" fill="var(--paper)" stroke="var(--muted)"><path d="M520,118 q6,10 0,14 q-6,-4 0,-14z"/><path d="M536,108 q6,10 0,14 q-6,-4 0,-14z"/><path d="M552,120 q6,10 0,14 q-6,-4 0,-14z"/><text class="t tb" x="536" y="100" text-anchor="middle" stroke="none" style="fill:var(--ink)">חלב</text></g>
+        <g id="endo-h"></g>
+      </svg>
+    </figure>
+    <div class="panel">
+      <div class="step-meta"><span class="step-n"></span><div class="dots"></div></div>
+      <h3 class="step-t"></h3>
+      <div class="step-d"></div>
+      <div class="ctrl"><button class="btn" data-act="prev" type="button">→ הקודם</button><button class="btn" data-act="play" type="button">הפעלה</button><button class="btn primary" data-act="next" type="button">הבא ←</button></div>
+    </div>
+  </div>
+  <div class="sub"><span class="ab">א</span>מרוץ: מסר בעצב מול מסר בדם</div>
+  <div class="panel">
+    <div class="race">
+      <div class="lane n"><span>מסר עצבי</span><div class="tr"><i id="race-n"></i></div></div>
+      <div class="lane h"><span>הורמון בדם</span><div class="tr"><i id="race-h"></i></div></div>
+    </div>
+    <div class="ctrl"><button class="btn primary" id="race-go" type="button">שלחי את שני המסרים</button></div>
+    <div class="step-d" id="race-t" style="min-height:0">מערכת העצבים מהירה מאוד ומתאימה לתגובות רגעיות. ההורמונים איטיים, אבל ההשפעה שלהם ממושכת: סוכר בדם, גדילה, מצב רוח. <span class="src mine">ההשוואה מסוכמת לפי הספר</span></div>
+  </div>
+  <div class="cards">
+    <div class="card"><h4>ההיפותלמוס: המתווך</h4><p>מקבל מסרים מהמוח ומשחרר הורמונים ליותרת המוח, כדי לגרות או לעכב הפרשה של הורמונים אחרים.</p></div>
+    <div class="card"><h4>יותרת המוח <span class="star">★</span>: "בלוטת העל"</h4><p>מייצרת כ־10 סוגי הורמונים שמשפיעים על כל הבלוטות האחרות, וגם הורמון גדילה.</p></div>
+    <div class="card"><h4>טסטוסטרון <span class="star">★</span> · אסטרוגן <span class="star">★</span></h4><p>יותרת המוח מפעילה את האשכים (טסטוסטרון) ומגרה ייצור אסטרוגן, שמוביל לשחרור ביציות.</p></div>
+  </div>
+  <details class="check"><summary>בדיקה עצמית: ההורמון מגיע עם הדם לכל הגוף. למה רק בלוטות החלב מייצרות חלב?</summary><p>כי רק לתאי בלוטות החלב יש קולטנים שמתאימים להורמון הזה. הורמון משפיע רק על תאי יעד שיש להם קולטנים מתאימים.</p></details>
+</section>
+
+<!-- ---------- גמישות ---------- -->
+<section class="station" id="plastic">
+  <header class="st-head">
+    <div class="eyebrow"><span class="sec">3.3.6</span><span>שאלות 34–37 · עמ' 140–143</span></div>
+    <h3 class="st">המוח משתנה: גמישות ונוירוגנזה</h3>
+    <p class="lead"><b>גמישות</b> <span class="star">★</span> (plasticity) היא היכולת של המוח להשתנות בעקבות התנסויות: נוצרות סינפסות חדשות, או שהתקשורת בסינפסות הקיימות משתנה. אם למדת עכשיו מהו פוטנציאל פעולה, המוח שלך כבר השתנה <span class="src book">ספר</span>.</p>
+  </header>
+  <div class="lab">
+    <figure class="fig">
+      <svg id="grow" viewBox="0 0 600 270" role="img" aria-label="נוירונים בסביבה מועשרת ובסביבה דלה"></svg>
+      <div class="cap">הדמיה של הרעיון, לא של הנתונים. <span class="src mine">לא מהספר</span></div>
+    </figure>
+    <div class="panel">
+      <div class="ctrl"><button class="btn primary" id="grow-go" type="button">עוברים 30 יום</button><button class="btn" id="grow-reset" type="button">מהתחלה</button></div>
+      <div class="step-d" id="grow-t"></div>
+    </div>
+  </div>
+  <div class="sub"><span class="ab">א</span>העדויות (שאלה 35)</div>
+  <div class="seg" id="ev-seg">
+    <button type="button" data-v="young" aria-pressed="true">חולדות צעירות</button>
+    <button type="button" data-v="adult" aria-pressed="false">חולדות בוגרות</button>
+    <button type="button" data-v="violin" aria-pressed="false">כנרים</button>
+    <button type="button" data-v="heal" aria-pressed="false">החלמה</button>
+  </div>
+  <div class="panel" id="ev-box" style="margin-top:10px"></div>
+  <div class="sub"><span class="ab">ב</span>תאי גזע ונוירוגנזה (שאלות 36–37)</div>
+  <div class="cards">
+    <div class="card"><h4>תאי גזע <span class="star">★</span> <span class="en">stem cells</span></h4><p>תאים <b>לא מתמחים</b>. בתנאים מתאימים אפשר לגרום להם לתפקד כנוירונים חדשים. התקווה: להחליף רקמה פגועה, ואולי לרפא שיתוק. יש כאן סוגיה אתית, כי הגמישים ביותר באים מעוברים.</p></div>
+    <div class="card"><h4>נוירוגנזה <span class="star">★</span> <span class="en">neurogenesis</span></h4><p><b>יצירת תאי מוח חדשים מתאי גזע.</b> כמאה שנה חשבו שבמוח בוגר מספר הנוירונים רק יורד. היום יודעים שנוירונים חדשים נוצרים גם במוח בוגר, גם אצל בני אדם, למשל בהיפוקמפוס (גולד וגרוס, Gould &amp; Gross, 2002).</p></div>
+    <div class="card"><h4>למה זה חשוב?</h4><p>אם המוח הבוגר מייצר נוירונים חדשים, יש סיכוי להחליף נוירונים שמתו בשבץ או בתאונה. לכן הגילוי האיץ את המחקר על הבראת המוח.</p></div>
+  </div>
+  <details class="check"><summary>בדיקה עצמית: למה בניסוי החולדות הבוגרות היו שתי קבוצות ביקורת?</summary><p>כדי להפריד בין השפעת <b>החברה</b> לבין השפעת <b>הגירוי</b>. לחולדות בתנאי המורכב היו יותר סינפסות גם לעומת הקבוצה החברתית, ולכן החפצים והגירוי עצמם משנים את המוח, לא רק החברה. <span class="src mine">ההסבר: שלי</span></p></details>
+</section>
+
+<footer class="note" style="margin-top:36px">
+  <p>נבנה לפי מדריך הלמידה (פרק 3) ולפי העמודים שהוא מטיל לקרוא בספר. הסיכום המלא נמצא בתיקיית הסיכומים: <b>96-143-היסודות-הביולוגיים-של-ההתנהגות</b>.</p>
+</footer>
+</div>
+
+<style>
+[hidden]{display:none!important}
+.fig svg text,.tile svg text{direction:rtl}
+svg .nr{fill:none;stroke:var(--tissue-line);stroke-width:6;stroke-linecap:round;stroke-linejoin:round;transition:stroke .3s}
+svg .nr.hl{stroke:var(--spark)}
+svg .nrf{fill:var(--tissue);stroke:var(--tissue-line);stroke-width:2;transition:fill .3s,stroke .3s}
+svg .nrf.hl{fill:color-mix(in srgb,var(--spark) 45%,var(--tissue));stroke:var(--spark)}
+.cbox{transition:border-color .3s,background .3s,opacity .3s;opacity:.5}
+.cbox.vis{opacity:.85}
+.cbox.hl{opacity:1;border-color:var(--spark);background:color-mix(in srgb,var(--spark) 14%,var(--paper))}
+#syn .ap{opacity:0}
+#syn[data-s="1"] .ap{opacity:1;animation:apdown 1.1s ease-in infinite}
+@keyframes apdown{from{transform:translateY(0)}to{transform:translateY(120px)}}
+#syn .ves,#syn .nt,#syn .ca{transition:transform .9s ease,opacity .6s}
+#syn .rc{fill:var(--exc);transition:fill .3s}
+#syn.inh .rc{fill:var(--inh)}
+#syn .rc-x{fill:var(--muted)}
+.arm{transition:transform .5s}
+.recoil .arm{transform:translateX(28px)}
+.mode-vol .m-reflex,.mode-reflex .m-vol{display:none}
+.sin{opacity:.28;transition:opacity .3s}
+.sin.on{opacity:1}
+.cnode{fill:var(--paper);stroke:var(--line);stroke-width:2;transition:fill .3s,stroke .3s}
+.cnode.on{fill:color-mix(in srgb,var(--spark) 55%,var(--paper));stroke:var(--spark)}
+.nsn rect{fill:var(--paper);stroke:var(--line);stroke-width:1.5;transition:stroke .2s,fill .2s}
+.nsn:hover rect{stroke:var(--muted)}
+.nsn.on rect{stroke:var(--spark);stroke-width:3;fill:color-mix(in srgb,var(--spark) 14%,var(--paper))}
+#br .bs{stroke-width:1.5;transition:opacity .3s}
+#br .bs.l1{fill:color-mix(in srgb,var(--l1) 30%,var(--paper));stroke:var(--l1)}
+#br .bs.l2{fill:color-mix(in srgb,var(--l2) 30%,var(--paper));stroke:var(--l2)}
+#br .bs.l3{fill:color-mix(in srgb,var(--l3) 12%,var(--paper));stroke:var(--l3)}
+#br .bs.cc{fill:none;stroke:color-mix(in srgb,var(--l3) 60%,var(--paper));stroke-width:16;stroke-linecap:round}
+#br .bs.hip{fill:none;stroke:color-mix(in srgb,var(--l2) 70%,var(--paper));stroke-width:9;stroke-linecap:round}
+#br .bs.ret{fill:none;stroke:var(--l1);stroke-width:4;stroke-dasharray:2 5;stroke-linecap:round}
+#br .bs.pit{fill:var(--soft);stroke:var(--muted)}
+#br .lobe{stroke:none}
+#br .lf{fill:var(--lf)} #br .lp{fill:var(--lp)} #br .lo{fill:var(--lo)} #br .lt{fill:var(--lt)}
+#br .area{fill:var(--ink);opacity:0;pointer-events:none;stroke:none}
+#br.show-areas .area{opacity:.2;pointer-events:auto}
+#br.show-areas .area.on{opacity:.45}
+#br .area-l{opacity:0;transition:opacity .3s}
+#br.show-areas .area-l{opacity:1}
+#br[data-layer="1"] .bs:not(.l1):not(.area),#br[data-layer="2"] .bs:not(.l2):not(.area),#br[data-layer="3"] .bs:not(.l3):not(.lobe):not(.area){opacity:.15}
+#br .bs.on{filter:drop-shadow(0 0 3px var(--spark)) drop-shadow(0 0 6px var(--spark))}
+.hem{fill:var(--tissue);stroke:var(--tissue-line);stroke-width:1.5;transition:fill .4s}
+.hem.on{fill:color-mix(in srgb,var(--spark) 42%,var(--tissue))}
+.sp-path{opacity:.12;transition:opacity .3s}
+.sp-path.on{opacity:1;stroke-dasharray:100;animation:draw .8s ease-out both}
+.hand{fill:var(--soft);stroke:var(--line);stroke-width:2;transition:stroke .3s}
+.hand.act{stroke:var(--exc);stroke-width:3}
+#grow .sg{fill:none;stroke:var(--tissue-line);stroke-linecap:round}
+#grow .sg.new{stroke:var(--chem);stroke-dasharray:100;stroke-dashoffset:100;transition:stroke-dashoffset .7s ease-out}
+#grow.grown .sg.new{stroke-dashoffset:0}
+#grow .syn-dot{fill:var(--spark);opacity:0;transition:opacity .4s}
+#grow.grown .syn-dot{opacity:1}
+.evbars{display:grid;gap:8px;margin-top:10px;font-size:14px}
+.evbars .lane{grid-template-columns:minmax(0,13em) minmax(0,1fr)}
+@media (max-width:560px){.evbars .lane{grid-template-columns:minmax(0,1fr)}}
+</style>
+
+<script>
+(()=>{
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in (attrs||{}))e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e}
+function txt(parent,x,y,s,cls,extra){const t=el('text',Object.assign({x,y,'text-anchor':'middle',class:cls||'t'},extra||{}),parent);t.textContent=s;return t}
+function seg(sel,fn){const s=typeof sel==='string'?$(sel):sel;s.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||!s.contains(b))return;$$('button',s).forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));fn(b.dataset,b)})}
+function press(sel,val,key){$$('button',$(sel)).forEach(b=>b.setAttribute('aria-pressed',b.dataset[key||'v']===val?'true':'false'))}
+let seed=11;const srand=()=>{seed=(seed*16807)%2147483647;return (seed-1)/2147483646};
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const gauss=()=>{let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)};
+
+/* ---------- Stepper ---------- */
+function Stepper(root,steps,onStep){
+  const p=$('.panel',root),dots=$('.dots',p),tN=$('.step-n',p),tT=$('.step-t',p),tD=$('.step-d',p);
+  const bPrev=$('[data-act=prev]',p),bNext=$('[data-act=next]',p),bPlay=$('[data-act=play]',p);
+  let i=0,timer=null;
+  function build(){dots.innerHTML='';steps.forEach((s,k)=>{const d=document.createElement('button');d.type='button';d.className='dot';d.setAttribute('aria-label','שלב '+(k+1));d.onclick=()=>{stop();go(k)};dots.appendChild(d)})}
+  function render(){
+    const s=steps[i];
+    tN.textContent='שלב '+(i+1)+' מתוך '+steps.length;
+    tT.innerHTML=s.t;tD.innerHTML=typeof s.d==='function'?s.d():s.d;
+    $$('.dot',dots).forEach((d,k)=>{d.classList.toggle('cur',k===i);d.classList.toggle('done',k<i)});
+    $$('[data-id]',root).forEach(e=>e.classList.remove('hl','vis'));
+    void root.offsetWidth;
+    (s.vis||[]).forEach(id=>$$('[data-id="'+id+'"]',root).forEach(e=>e.classList.add('vis')));
+    (s.hl||[]).forEach(id=>$$('[data-id="'+id+'"]',root).forEach(e=>{e.classList.remove('vis');e.classList.add('hl')}));
+    bPrev.disabled=i===0;bNext.disabled=i===steps.length-1;
+    if(onStep)onStep(i+1,s);
+  }
+  function go(k){i=clamp(k,0,steps.length-1);render()}
+  function stop(){if(timer){clearInterval(timer);timer=null}bPlay.textContent='הפעלה'}
+  bPrev.onclick=()=>{stop();go(i-1)};bNext.onclick=()=>{stop();go(i+1)};
+  bPlay.onclick=()=>{if(timer){stop();return}if(i===steps.length-1)go(0);bPlay.textContent='עצירה';timer=setInterval(()=>{if(i>=steps.length-1){stop();return}go(i+1)},3800)};
+  build();render();
+  return {go,set(ns){steps=ns;i=0;stop();build();render()},get i(){return i}};
+}
+
+/* ---------- nav ---------- */
+(function(){
+  const nav=$('.nav-in'),links=$$('.nav a'),map=new Map(links.map(a=>[a.getAttribute('href').slice(1),a]));
+  if(!('IntersectionObserver' in window))return;
+  const io=new IntersectionObserver(es=>{es.forEach(e=>{if(!e.isIntersecting)return;const a=map.get(e.target.id);if(!a)return;links.forEach(x=>x.classList.toggle('cur',x===a));const r=a.getBoundingClientRect(),cr=nav.getBoundingClientRect();if(r.left<cr.left+8||r.right>cr.right-8)nav.scrollBy({left:(r.left+r.width/2)-(cr.left+cr.width/2),behavior:'smooth'})})},{rootMargin:'-40% 0px -55% 0px'});
+  $$('.station').forEach(s=>io.observe(s));
+})();
+
+/* ---------- 3.1.1 finches ---------- */
+(function(){
+  const svg=$('#finch-svg'),hs=$('#finch-hist'),N=48;
+  const island=el('ellipse',{cx:280,cy:135,rx:276,ry:132},svg);
+  const envFill={drought:'color-mix(in srgb, var(--seed) 38%, var(--paper))',rain:'color-mix(in srgb, var(--good) 20%, var(--paper))',plenty:'color-mix(in srgb, var(--good) 10%, var(--soft))'};
+  const slots=[];for(let r=0;r<6;r++)for(let c=0;c<8;c++)slots.push({x:44+c*66+(r%2?22:0)+(srand()-.5)*12,y:30+r*40+(srand()-.5)*8});
+  const birds=slots.map(s=>{const g=el('g',{class:'bird',transform:'translate('+s.x.toFixed(1)+','+s.y.toFixed(1)+')'},svg);
+    el('circle',{class:'ring',r:20,cx:-2,cy:-3},g);
+    el('path',{d:'M10,-2 L23,-9 L23,4 Z',fill:'var(--bird)',opacity:.75},g);
+    el('ellipse',{rx:13,ry:9.5,fill:'var(--bird)'},g);
+    el('circle',{cx:-10,cy:-7,r:7.5,fill:'var(--bird)'},g);
+    el('circle',{cx:-12,cy:-9,r:1.7,fill:'var(--paper)'},g);
+    return {g,beak:el('polygon',{fill:'var(--spark)'},g)}});
+  // histogram frame
+  el('path',{d:'M36,104 L524,104',stroke:'var(--muted)','stroke-width':1.5},hs);
+  txt(hs,480,126,'מקור קטן','ts');txt(hs,80,126,'מקור גדול','ts');txt(hs,280,126,'גודל המקור','ts');
+  const ghostG=el('g',{},hs),barG=el('g',{},hs);
+  const mean=el('path',{fill:'var(--ink)'},hs);
+  const BINS=6,bx=k=>524-(k+1)*80+8,X=v=>524-v*488;
+  const bars=[...Array(BINS)].map((_,k)=>el('rect',{x:bx(k),width:64,y:104,height:0,rx:3,fill:'var(--spark)',style:'transition:y .6s,height .6s'},barG));
+  const ghosts=[...Array(BINS)].map((_,k)=>el('rect',{x:bx(k),width:64,y:104,height:0,rx:3,fill:'none',stroke:'var(--muted)','stroke-dasharray':'4 3','stroke-width':1.5},ghostG));
+  const surv={drought:b=>.03+.9*ss(.45,.85,b),rain:b=>.15+.75*(1-ss(.3,.75,b)),plenty:()=>.8};
+  function ss(a,b,x){const t=clamp((x-a)/(b-a),0,1);return t*t*(3-2*t)}
+  let pop,alive,born,gen,phase,env='drought',selEnv='drought',prevPop=null,beforeSel=null;
+  const counts=(arr,mask)=>{const c=Array(BINS).fill(0);arr.forEach((b,i)=>{if(mask&&!mask[i])return;c[Math.min(BINS-1,Math.floor(b*BINS))]++});return c};
+  const meanOf=(arr,mask)=>{let s=0,n=0;arr.forEach((b,i)=>{if(mask&&!mask[i])return;s+=b;n++});return n?s/n:0};
+  const word=m=>m<.42?'קטן':m<.58?'בינוני':'גדול';
+  function init(){pop=Array.from({length:N},()=>clamp(.5+.17*gauss(),.04,.96));alive=pop.map(()=>true);born=pop.map(()=>false);gen=1;phase=0;prevPop=null;beforeSel=null;draw()}
+  function select(){selEnv=env;beforeSel=pop.slice();alive=pop.map(b=>Math.random()<surv[env](b));
+    if(alive.filter(Boolean).length<4){pop.map((b,i)=>[surv[env](b),i]).sort((a,b)=>b[0]-a[0]).slice(0,4).forEach(([,i])=>alive[i]=true)}}
+  function breed(){prevPop=beforeSel||pop.slice();const par=pop.filter((b,i)=>alive[i]);born=alive.map(a=>!a);pop=pop.map((b,i)=>alive[i]?b:clamp(par[Math.floor(Math.random()*par.length)]+.05*gauss(),.02,.98));alive=pop.map(()=>true);gen++}
+  function draw(){
+    birds.forEach((o,i)=>{const b=pop[i],th=3+10*b,L=6+8*b;o.beak.setAttribute('points','-16,'+(-7-th/2).toFixed(1)+' -16,'+(-7+th/2).toFixed(1)+' '+(-16-L).toFixed(1)+','+(-7+th*.1).toFixed(1));o.g.classList.toggle('dead',!alive[i]);o.g.classList.toggle('born',born[i]&&phase===2)});
+    island.setAttribute('fill',envFill[phase===1?selEnv:env]);
+    const c=counts(pop,phase===1?alive:null),g=phase===1?counts(beforeSel):(prevPop?counts(prevPop):null);
+    bars.forEach((r,k)=>{const h=Math.min(96,c[k]*3.4);r.setAttribute('y',104-h);r.setAttribute('height',h)});
+    ghosts.forEach((r,k)=>{const h=g?Math.min(96,g[k]*3.4):0;r.setAttribute('y',104-h);r.setAttribute('height',h)});
+    const m=meanOf(pop,phase===1?alive:null),mx=X(m);mean.setAttribute('d','M'+mx.toFixed(1)+',106 l-6,10 l12,0 z');
+    $$('#finch-phases span').forEach((s,k)=>s.classList.toggle('on',k===phase));
+    const k=alive.filter(Boolean).length;
+    let t='';
+    if(phase===0)t='<p><b>שונות</b> (variation). לכל פרוש מקור בגודל קצת אחר. בלי ההבדלים האלה לא היה ממה "לבחור".</p><p>'+(gen>1?'זה הדור ה־'+gen+'. ':'')+'לחצי "הבא" כדי שהסביבה תבחר.</p>';
+    else if(phase===1)t={drought:'<p><b>הסביבה בוחרת.</b> בבצורת הגרעינים הקטנים נגמרים, ונשארים רק גדולים וקשים. פרושים עם מקור קטן לא מצליחים לפצח אותם. שרדו '+k+' מתוך '+N+', רובם בעלי מקור גדול.</p><p><span class="src book">ספר</span> אחרי הבצורת של 1977 האוכלוסייה ירדה ביותר מ־80%.</p>',
+      rain:'<p><b>הסביבה בוחרת.</b> אחרי גשמים רבים יש שפע של גרעינים קטנים, ועכשיו דווקא בעלי המקור הקטן מצליחים יותר. שרדו '+k+' מתוך '+N+'.</p><p><span class="src book">ספר</span> כך היה ב־1983. כשהסביבה משתנה, משתנה גם מי "מתאים".</p>',
+      plenty:'<p><b>אין בררה.</b> יש גרעינים מכל הסוגים, כל פרוש מוצא מה לאכול, ואין תחרות. מי שמת, מת מסיבות אחרות, בלי קשר לגודל המקור. שרדו '+k+' מתוך '+N+'.</p><p>זו התשובה לשאלה 3: הפנוטיפ מכריע רק כשהסביבה קשה.</p>'}[selEnv];
+    else{const d=m-meanOf(prevPop||pop);t='<p><b>תורשה</b> (heredity). השורדים מתרבים, והצאצאים (בטבעת כתומה) יורשים מהם את הגנוטיפ. לכן הם דומים להורים בגודל המקור.</p><p>השווי לקו המקווקו, הדור הקודם: '+(Math.abs(d)<.03?'הממוצע כמעט לא זז.':d>0?'הממוצע זז לכיוון <b>מקור גדול</b>.':'הממוצע זז לכיוון <b>מקור קטן</b>.')+'</p>'}
+    $('#finch-text').innerHTML=t;
+    $('#finch-stats').textContent='דור '+gen+' · '+(phase===1?'שרדו '+k+' מתוך '+N:N+' פרושים')+' · מקור ממוצע: '+word(m);
+  }
+  $('#finch-next').onclick=()=>{if(phase===0){select();phase=1}else if(phase===1){breed();phase=2}else{phase=0;born=pop.map(()=>false)}draw()};
+  $('#finch-gen').onclick=()=>{if(phase===2){phase=0}if(phase===0)select();breed();phase=2;draw()};
+  $('#finch-reset').onclick=init;
+  seg('#finch-env',d=>{env=d.env;draw()});
+  init();
+})();
+
+/* ---------- 3.1.2 genes ---------- */
+(function(){
+  const ch=$('#chromo');txt(ch,280,26,'46 כרומוזומים = 23 זוגות','t tb');
+  for(let k=0;k<23;k++){const col=k%8,row=Math.floor(k/8),x=98+col*52,y=48+row*70,h=34-row*4,sex=k===22;
+    el('rect',{x:x-9,y,width:8,height:sex?28:h,rx:4,fill:'var(--l2)'},ch);el('rect',{x:x+1,y,width:8,height:sex?17:h,rx:4,fill:'var(--l3)'},ch);
+    if(sex){txt(ch,x,y+46,'זוג 23: המין','ts')}}
+  el('rect',{x:330,y:254,width:14,height:14,rx:3,fill:'var(--l2)'},ch);txt(ch,380,265,'מאמא (23)','ts');
+  el('rect',{x:190,y:254,width:14,height:14,rx:3,fill:'var(--l3)'},ch);txt(ch,240,265,'מאבא (23)','ts');
+  const hx=$('#helix');let d1='',d2='';
+  for(let x=40;x<=520;x+=14){const a=145+50*Math.sin(x/38),b=145-50*Math.sin(x/38);el('line',{x1:x,y1:a,x2:x,y2:b,stroke:'var(--line)','stroke-width':2},hx)}
+  for(let x=40;x<=520;x+=4){const a=145+50*Math.sin(x/38),b=145-50*Math.sin(x/38);d1+=(x===40?'M':'L')+x+','+a.toFixed(1);d2+=(x===40?'M':'L')+x+','+b.toFixed(1)}
+  el('path',{d:d1,fill:'none',stroke:'var(--l2)','stroke-width':4},hx);el('path',{d:d2,fill:'none',stroke:'var(--l3)','stroke-width':4},hx);
+  txt(hx,280,252,'גדיל ארוך של דנ"א, מסודר כסליל כפול','t');
+  const gs=$('#genestrip');
+  [[60,190,'עוד גן'],[230,330,null],[370,500,'עוד גן']].forEach(([a,b,l])=>{el('rect',{x:a,y:122,width:b-a,height:46,rx:6,fill:l?'var(--soft)':'color-mix(in srgb, var(--spark) 30%, var(--paper))',stroke:l?'var(--line)':'var(--spark)','stroke-width':l?1:2.5},gs);if(l)txt(gs,(a+b)/2,110,l,'ts')});
+  el('path',{d:'M40,130 L520,130 M40,160 L520,160',stroke:'var(--muted)','stroke-width':3},gs);
+  for(let x=46;x<520;x+=12)el('line',{x1:x,y1:130,x2:x,y2:160,stroke:'var(--line)','stroke-width':2},gs);
+  txt(gs,280,98,'גן: קטע אחד של דנ"א','t tb');txt(gs,280,196,'ובו הוראות לייצור חלבון אחד','t');txt(gs,280,236,'בכל כרומוזום יש אלפי גנים','ts');
+  const pr=$('#protein'),cols=['var(--chem)','var(--l1)','var(--l2)','var(--l3)'];let pd='';const pts=[];
+  for(let k=0;k<14;k++){const x=118+k*25,y=140+32*Math.sin(k*.9);pts.push([x,y]);pd+=(k?'L':'M')+x+','+y.toFixed(1)}
+  el('path',{d:pd,fill:'none',stroke:'var(--line)','stroke-width':3},pr);pts.forEach(([x,y],k)=>el('circle',{cx:x,cy:y,r:10,fill:cols[k%4]},pr));
+  txt(pr,280,230,'חלבון: נבנה לפי ההוראות של הגן','t tb');
+  Stepper($('#genes-lab'),[
+    {t:'1 · תא <span class="en">cell</span>',d:'<p>בגרעין של כל תא בגוף נמצא החומר הגנטי.</p>',hl:['lv1']},
+    {t:'2 · כרומוזומים <span class="star">★</span> <span class="en">chromosomes</span>',d:'<p>מבנים דמויי מקלות בגרעין. בכל תא <b>46</b>: ‏23 מאמא ו־23 מאבא, מרגע ההפריה. הזוג האחרון הוא <b>כרומוזומי המין</b> <span class="star">★</span>.</p>',hl:['lv2']},
+    {t:'3 · דנ"א <span class="star">★</span> <span class="en">DNA</span>',d:'<p>כל כרומוזום הוא גדיל ארוך אחד של דנ"א, מסודר כמו <b>סליל כפול</b>.</p>',hl:['lv3']},
+    {t:'4 · גן <span class="star">★</span> <span class="en">gene</span>',d:'<p><b>קטע</b> של דנ"א, ובו הוראות לייצור <b>חלבון</b>. בכל כרומוזום יש אלפי גנים.</p><p>הרצף המלא של הגנים נקרא <b>גנום</b> <span class="star">★</span> (genome).</p>',hl:['lv4']},
+    {t:'5 · חלבון <span class="en">protein</span>',d:'<p>החלבונים שנבנים לפי הגנים <b>מפעילים את התהליכים בגוף</b>.</p>',hl:['lv5']},
+    {t:'6 · תכונה: הפנוטיפ',d:'<p>דרך החלבונים הגנים מביאים לביטוי תכונות: מבנה גוף, כוח, אינטליגנציה, דפוסי התנהגות. מה שיוצא בפועל תלוי גם בסביבה (תחנת הבררה הטבעית).</p>',hl:['lv6']}]);
+  $('#sx-go').onclick=()=>{const y=Math.random()<.5;$('#sx-dad').textContent=y?'Y':'X';$('#sx-out').innerHTML=y?'<b>X</b> מאמא + <b>Y</b> מאבא = <b>XY</b>: זכר.':'<b>X</b> מאמא + <b>X</b> מאבא = <b>XX</b>: נקבה.'};
+})();
+
+/* ---------- twins ---------- */
+(function(){
+  const TW={drayna:{mz:.67,dz:.44,h:.71,t:'<p><b>מחקר שמיעת זיופים</b> (דריינה ועמיתיו, Drayna et al., 2001) <span class="src book">ספר</span></p><p>136 זוגות זהים ו־148 זוגות לא־זהים שמעו 26 מנגינות מוכרות, וקבעו על כל אחת אם היא נכונה או מזויפת. הזהים דומים זה לזה יותר (0.67 מול 0.44), ולכן ליכולת יש <b>מרכיב גנטי חזק</b>. התורשתיות שחושבה: <b>0.71</b>.</p>'},
+    none:{mz:.5,dz:.5,h:.03,t:'<p><b>מקרה דמיוני</b> <span class="src mine">לא מהספר</span></p><p>הזהים חולקים פי שניים גנים, ובכל זאת דומים בדיוק כמו הלא־זהים. כלומר, הגנים לא הוסיפו דמיון. התכונה מושפעת בעיקר מהסביבה, והתורשתיות קרובה ל־0.</p>'}};
+  function tw(k){const s=TW[k],w1=s.mz*160,w2=s.dz*160;
+    $('#tw-mz').setAttribute('width',w1);$('#tw-mz').setAttribute('x',490-w1);$('#tw-dz').setAttribute('width',w2);$('#tw-dz').setAttribute('x',230-w2);
+    $('#tw-mz-t').textContent='מתאם '+s.mz.toFixed(2);$('#tw-dz-t').textContent='מתאם '+s.dz.toFixed(2);
+    $('#tw-text').innerHTML=s.t;$('#tw-meter i').style.left=(s.h*100)+'%'}
+  seg('#tw-seg',d=>tw(d.k));tw('drayna');
+})();
+
+/* ---------- neuron ---------- */
+(function(){
+  const lab=$('#neuron-lab');
+  const st=Stepper(lab,[
+    {t:'1 · דנדריטים <span class="star">★</span> <span class="en">dendrites</span>: קולטים',d:'<p>סיבים מסועפים שיוצאים מגוף התא. הם <b>קולטים</b> גירוי מאיברי החוש או מנוירונים אחרים.</p>',hl:['dend']},
+    {t:'2 · גוף התא <span class="star">★</span> <span class="en">soma</span>: משלב',d:'<p>מכיל את הגרעין ושומר על חיי התא. הוא <b>משלב</b> את המידע שמגיע מהדנדריטים, לפעמים מאלפים, ומעביר אותו לאקסון אחד.</p>',hl:['soma']},
+    {t:'3 · אקסון <span class="star">★</span> <span class="en">axon</span>: מוליך',d:'<p>סיב יחיד וארוך שמוליך את המסר לכל אורכו. אצל נוירונים מהירים הוא עטוף ב<b>מעטפת מיילין</b>, שמאיצה את ההולכה.</p><p><span class="src book">ספר</span> במוח השדרה אקסון יכול להגיע למטר. במוח הוא קצר ממילימטר.</p>',hl:['axon']},
+    {t:'4 · כפתורים סופיים <span class="star">★</span> <span class="en">terminal buttons</span>: מעבירים',d:'<p>בליטות קטנות בקצה האקסון. הן מגרות את הנוירון הבא, שריר או בלוטה, כשהן משחררות <b>נוירוטרנסמיטרים</b> (תחנת הסינפסה).</p>',hl:['term']}]);
+  $$('[data-part]',lab).forEach(g=>g.addEventListener('click',()=>st.go(+g.dataset.part-1)));
+})();
+
+/* ---------- reflex ---------- */
+(function(){
+  const lab=$('#reflex-lab');
+  const R=[{t:'1 · דקירה',d:'<p>המסמר דוקר את קצה האצבע. <b>קולטני הכאב</b> בעור קולטים את הגירוי.</p>',hl:['tip']},
+    {t:'2 · נוירון סנסורי (חישתי)',d:'<p><b>נוירון סנסורי</b> (sensory neuron) מוליך את המסר מהעור <b>אל מוח השדרה</b>.</p>',hl:['sens'],vis:['tip']},
+    {t:'3 · אינטרנוירון במוח השדרה',d:'<p><b>אינטרנוירון</b> (interneuron) במוח השדרה מעביר את המסר <b>ישר</b> לנוירון מוטורי. המוח עדיין לא יודע כלום.</p>',hl:['inter'],vis:['tip','sens']},
+    {t:'4 · נוירון מוטורי: היד נרתעת',d:'<p><b>נוירון מוטורי</b> (motor neuron) מפעיל את השריר, והיד נרתעת מהמסמר.</p>',hl:['motor','muscle'],vis:['tip','sens','inter']},
+    {t:'5 · רק עכשיו: כאב',d:'<p>המסר עולה במוח השדרה <b>אל המוח</b>, לקורטקס הסנסורי. רק עכשיו מרגישים כאב, <b>אחרי</b> שהיד כבר זזה.</p>',hl:['up','brain','ouch'],vis:['tip','sens','inter','motor','muscle']},
+    {t:'6 · נשמר בזיכרון',d:'<p>האירוע נשמר בזיכרון, כדי שבפעם הבאה נימנע מהחפץ מראש.</p>',hl:['brain','mem'],vis:['tip','sens','inter','motor','muscle','up','ouch']}];
+  const V=[{t:'1 · המוח מחליט',d:'<p>ריויטל רואה פרח ורוצה להריח אותו. ההחלטה נוצרת <b>במוח</b>.</p>',hl:['brain']},
+    {t:'2 · מקרבת את הפרח לאף',d:'<p>פקודה מהמוח ← נוירונים מוטוריים ← שרירי כף היד והזרוע.</p>',hl:['down','motor','muscle'],vis:['brain']},
+    {t:'3 · מריחה',d:'<p>נוירונים סנסוריים באף מעבירים את המידע <b>ישר אל המוח</b>. נוירונים במוח מתרגמים אותו לתחושת ריח.</p>',hl:['nose','brain'],vis:['down','motor','muscle']},
+    {t:'4 · מחליטה להניח',d:'<p>הנוירונים במוח מעבירים את המידע לנוירונים שמחליטים להניח את הפרח.</p>',hl:['brain'],vis:['nose']},
+    {t:'5 · מניחה את הפרח',d:'<p>פקודה מהמוח ← אינטרנוירונים במוח השדרה ← נוירונים מוטוריים ← השרירים.</p><p>כאן המוח מחליט <b>לפני</b> הפעולה, ולכן ריויטל מודעת ושולטת. ברפלקס המוח מתעדכן רק <b>אחרי</b>.</p>',hl:['down','inter','motor','muscle'],vis:['brain','nose']}];
+  let mode='reflex';
+  const st=Stepper(lab,R,n=>{const r=mode==='reflex';lab.classList.toggle('recoil',r&&n>=4);$('#tl-move').classList.toggle('on',r&&n>=4);$('#tl-pain').classList.toggle('on',r&&n>=5)});
+  seg('#reflex-mode',d=>{mode=d.m;lab.classList.toggle('mode-reflex',mode==='reflex');lab.classList.toggle('mode-vol',mode==='vol');st.set(mode==='reflex'?R:V)});
+})();
+
+/* ---------- AP: summation ---------- */
+(function(){
+  const SI=[{k:'e',x:522,y:62},{k:'e',x:546,y:120},{k:'e',x:522,y:178},{k:'i',x:396,y:46},{k:'i',x:464,y:46},{k:'i',x:470,y:196}];
+  const names=['מעורר 1','מעורר 2','מעורר 3','מעכב 1','מעכב 2','מעכב 3'];
+  const state=[true,false,false,false,false,false],gI=$('#sum-inputs'),chips=$('#sum-chips'),gs=[];
+  SI.forEach((s,i)=>{const dx=430-s.x,dy=120-s.y,L=Math.hypot(dx,dy),ex=430-dx/L*40,ey=120-dy/L*40,c=s.k==='e'?'var(--exc)':'var(--inh)';
+    const g=el('g',{class:'click sin'},gI);el('line',{x1:s.x,y1:s.y,x2:ex,y2:ey,stroke:c,'stroke-width':4,'stroke-linecap':'round'},g);el('circle',{cx:s.x,cy:s.y,r:12,fill:c},g);
+    txt(g,s.x,s.y+5,s.k==='e'?'+':'−','tm tb',{style:'fill:#fff;font-size:15px'});g.addEventListener('click',()=>{state[i]=!state[i];upd()});gs.push(g);
+    const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=names[i];b.onclick=()=>{state[i]=!state[i];upd()};chips.appendChild(b)});
+  function train(n){if(!n)return 'M10,46 L290,46';let d='M10,46';const step=270/n;for(let j=0;j<n;j++){const x=20+j*step+step/2-6;d+=' L'+x.toFixed(1)+',46 L'+(x+3).toFixed(1)+',14 L'+(x+6).toFixed(1)+',54 L'+(x+9).toFixed(1)+',46'}return d+' L290,46'}
+  function upd(){const e=state.slice(0,3).filter(Boolean).length,i=state.slice(3).filter(Boolean).length,s=e-i,fire=s>=2;
+    gs.forEach((g,k)=>g.classList.toggle('on',state[k]));$$('.chip',chips).forEach((b,k)=>b.setAttribute('aria-pressed',state[k]?'true':'false'));
+    $('#sum-val').textContent=(s>0?'+':'')+s;$('#sum-soma').classList.toggle('hl',fire);$('#fire-pulse').classList.toggle('go',fire);
+    $('#sum-trace').setAttribute('d',train(fire?(s>=3?5:2):0));
+    $('#sum-status').textContent='סכום הקלטים: '+(s>0?'+':'')+s+' · הסף: +2 · '+(fire?'ירי!':'אין ירי');
+    $('#sum-text').innerHTML=!fire?'<p>מתחת לסף. הנוירון <b>לא יורה</b>. אין "חצי ירייה".</p>'+(i?'<p>הקלטים המעכבים ("אל תירה!") מורידים את הסכום.</p>':'<p>הוסיפי עוד קלט מעורר ("ירה!").</p>')
+      :s===2?'<p>הסכום הגיע לסף, והנוירון <b>יורה</b>. הדחף יוצא לאורך האקסון כמו פתיל, ושומר על אותו גודל עד הסוף.</p><p>נסי להוסיף עוד קלט מעורר.</p>'
+      :'<p>עוד קלט מעורר <b>לא יוצר ירייה גדולה יותר</b>: הגובה זהה. מה שגדל הוא <b>מספר היריות</b>, כלומר התדירות.</p>'}
+  $('#sum-reset').onclick=()=>{state.fill(false);upd()};upd();
+})();
+
+/* ---------- AP: rate & recruitment ---------- */
+(function(){
+  const sc=$('#scope'),rows=[40,92,144,196];
+  rows.forEach((y,k)=>{el('path',{d:'M20,'+y+' L530,'+y,stroke:'var(--line)','stroke-width':1.5},sc);txt(sc,565,y+4,'נוירון '+(k+1),'ts')});
+  el('path',{d:'M20,14 L530,14',stroke:'var(--muted)','stroke-dasharray':'3 4','stroke-width':1},sc);txt(sc,275,10,'כל הקוצים באותו גובה','ts',{style:'font-size:10.5px'});
+  const tr=rows.map(()=>el('path',{fill:'none',stroke:'var(--spark)','stroke-width':2.2,'stroke-linejoin':'round',style:'transition:opacity .3s'},sc));
+  let cf=0,cn=0,none=false;
+  function spikes(y,count,k){if(!count)return 'M20,'+y+' L530,'+y;let d='M20,'+y;const step=480/count;for(let j=0;j<count;j++){const x=30+j*step+((k*37+j*53)%17)*(step>60?1:.4);d+=' L'+x.toFixed(1)+','+y+' L'+(x+3).toFixed(1)+','+(y-26)+' L'+(x+6).toFixed(1)+','+(y+6)+' L'+(x+9).toFixed(1)+','+y}return d+' L530,'+y}
+  function draw(){const count=none?0:(cf?10:3),n=none?0:(cn?4:1);
+    tr.forEach((p,k)=>{p.setAttribute('d',spikes(rows[k],k<n?count:0,k));p.style.opacity=k<n?1:.3});
+    const lvl=none?0:(cf+cn===0?1:cf+cn===1?2:3);
+    $('#feel-bar').style.width=[0,28,60,96][lvl]+'%';$('#feel-w').textContent=['אין תחושה','חלשה','בינונית','חזקה'][lvl];
+    $$('#code-tbl td').forEach(td=>td.classList.toggle('hit',!none&&td.dataset.c===''+cf+cn));
+    press('#code-f',none?'x':''+cf);press('#code-n',none?'x':''+cn);
+    press('#code-preset',none?'none':cf===0&&cn===0?'light':cf&&cn?'strong':'x','p')}
+  seg('#code-preset',d=>{if(d.p==='none'){none=true}else{none=false;cf=cn=d.p==='strong'?1:0}draw()});
+  seg('#code-f',d=>{none=false;cf=+d.v;draw()});seg('#code-n',d=>{none=false;cn=+d.v;draw()});
+  $$('#code-tbl td').forEach(td=>{td.style.cursor='pointer';td.onclick=()=>{none=false;cf=+td.dataset.c[0];cn=+td.dataset.c[1];draw()}});
+  draw();
+})();
+
+/* ---------- AP: myelin ---------- */
+(function(){
+  const g=$('#myelin-segs'),segs=[];for(let x=540;x>80;x-=72)segs.push(el('rect',{x:x-52,y:44,width:52,height:22,rx:11,fill:'var(--soft)',stroke:'var(--tissue-line)','stroke-width':1.5,style:'transition:opacity .4s'},g));
+  let ms=false;
+  function text(){$('#my-text').innerHTML=(ms?'<p><b>טרשת נפוצה</b> (multiple sclerosis): תאי מערכת החיסון תוקפים את מעטפת המיילין. האקסונים נחשפים, והתקשורת המהירה בין הנוירונים נפגעת. התוצאה: ראייה כפולה, רעד, ובסוף שיתוק.</p>':'<p>מעטפת המיילין (מתאי גלייה) מבודדת את האקסון ו<b>מאיצה</b> את ההולכה. האקסונים של הנוירונים המהירים עטופים בה.</p>')+'<p class="lbl" id="my-res">לחצי "שלחי דחף".</p>'}
+  seg('#my-seg',d=>{ms=d.v==='ms';segs.forEach((r,k)=>r.style.opacity=ms&&k%2===1?.1:1);text()});
+  $('#my-go').onclick=()=>{const dot=$('#my-dot'),dur=ms?3200:800,t0=performance.now();$('#my-res').textContent='הדחף בדרך...';
+    (function f(t){const p=Math.min(1,(t-t0)/dur);dot.setAttribute('cx',(570-540*p).toFixed(1));dot.setAttribute('opacity',p<1?(ms?.45+.55*Math.abs(Math.sin(p*16)):1):0);
+      if(p<1)requestAnimationFrame(f);else $('#my-res').textContent=ms?'הדחף הגיע לאט ובקושי. (ההדמיה: לא מהספר)':'הדחף הגיע מהר.'})(t0)};
+  text();
+})();
+
+/* ---------- synapse ---------- */
+(function(){
+  const svg=$('#syn'),lab=$('#syn-lab');let type='exc';
+  [150,220,290,360].forEach((x,k)=>{const m=k<3;el('path',{d:m?'M'+(x-17)+',250 L'+(x-17)+',232 L'+(x-8)+',232 L'+x+',244 L'+(x+8)+',232 L'+(x+17)+',232 L'+(x+17)+',250 Z':'M'+(x-17)+',250 L'+(x-17)+',232 L'+(x-7)+',232 L'+(x-7)+',242 L'+(x+7)+',242 L'+(x+7)+',232 L'+(x+17)+',232 L'+(x+17)+',250 Z',class:m?'rc':'rc-x',stroke:'var(--tissue-line)','stroke-width':1},$('#syn-rec'))});
+  const VS=[[190,96],[250,82],[312,96],[214,134],[290,134]];
+  const ves=VS.map(([x,y])=>{const g=el('g',{class:'ves'},$('#syn-ves'));el('circle',{r:17,fill:'var(--paper)',stroke:'var(--chem)','stroke-width':2},g);[[-6,-4],[6,-4],[0,6]].forEach(([a,b])=>el('path',{d:'M'+(a-4)+','+(b-3)+' L'+(a+4)+','+(b-3)+' L'+a+','+(b+4)+' Z',fill:'var(--chem)'},g));return {g,x,y}});
+  const CA=[[150,206,150,148],[164,222,166,136],[370,206,370,148],[356,222,354,136]];
+  const cas=CA.map(c=>({e:el('circle',{r:5,fill:'var(--l1)',class:'ca'},$('#syn-ca')),c}));
+  const nts=[...Array(9)].map(()=>el('path',{d:'M-7,-6 L7,-6 L0,7 Z',fill:'var(--chem)',class:'nt'},$('#syn-nt')));
+  const P4=[[176,182],[196,186],[236,182],[256,186],[276,182],[300,186],[320,182],[226,190],[288,190]];
+  const P5=[[150,206],[186,214],[220,204],[250,216],[290,206],[318,214],[352,206],[380,214],[268,222]];
+  const P6=[[150,237],[186,212],[220,237],[256,212],[290,237],[322,214],[360,220],[384,212],[268,204]];
+  const P8=[[150,220],[200,150],[220,220],[256,212],[290,220],[320,150],[360,214],[384,212],[268,204]];
+  const tf=(e,x,y,o)=>{e.style.transform='translate('+x+'px,'+y+'px)';e.style.opacity=o};
+  function set(n){svg.dataset.s=n;
+    ves.forEach(v=>n<2?tf(v.g,v.x,v.y,1):n<4?tf(v.g,v.x,148,1):tf(v.g,v.x,154,0));
+    cas.forEach(({e,c})=>n<3?tf(e,c[0],c[1],n>=2?1:0):tf(e,c[2],c[3],n>=5?0:1));
+    nts.forEach((e,k)=>{const v=ves[k%5];if(n<4)tf(e,v.x,v.y,0);else if(n===4)tf(e,P4[k][0],P4[k][1],1);else if(n===5)tf(e,P5[k][0],P5[k][1],1);else if(n<8)tf(e,P6[k][0],P6[k][1],1);else tf(e,P8[k][0],P8[k][1],k===1||k===5?.9:.15)})}
+  const st=Stepper(lab,[
+    {t:'1 · פוטנציאל הפעולה מגיע',d:'<p>הדחף החשמלי מגיע לאורך האקסון אל <b>הכפתור הסופי</b>.</p>'},
+    {t:'2 · השלפוחיות נעות לממברנה',d:'<p><b>השלפוחיות הסינפטיות</b>, שמכילות נוירוטרנסמיטרים, נעות אל הממברנה של הכפתור ונצמדות אליה.</p>'},
+    {t:'3 · יוני סידן נכנסים',d:'<p>תעלות יונים נפתחות, ויוני <b>סידן</b> (הנקודות הכתומות) נכנסים לכפתור.</p>'},
+    {t:'4 · השלפוחיות משחררות',d:'<p>הסידן גורם לשלפוחיות להתפקע ולשחרר את <b>הנוירוטרנסמיטרים</b> אל המרווח הסינפטי.</p>'},
+    {t:'5 · חוצים את המרווח',d:'<p>הנוירוטרנסמיטרים מתפזרים במהירות וחוצים את <b>המרווח הסינפטי</b>.</p>'},
+    {t:'6 · נקשרים לקולטנים',d:'<p>הם נקשרים ל<b>קולטנים</b> בממברנה הבתר־סינפטית, רק אם הצורה מתאימה, <b>כמו מפתח למנעול</b>, ורק אם הקולטן לא תפוס. לקולטן האפור יש צורה אחרת, ולכן אין בו קשירה.</p>'},
+    {t:'7 · הנוירון הקולט מקבל הוראה',d:()=>type==='exc'?'<p>הקולטנים כאן <b>מעוררים</b>, ולכן ההוראה היא "ירה!": הסיכוי שהנוירון הקולט יירה עולה.</p><p>החליפי ל"מעכבים" ותראי שאותו נוירוטרנסמיטר נותן הוראה הפוכה.</p>':'<p>הקולטנים כאן <b>מעכבים</b>, ולכן ההוראה היא "אל תירה!": הסיכוי שהנוירון הקולט יירה יורד.</p><p>אותו נוירוטרנסמיטר, הוראה הפוכה. <b>הקולטן קובע.</b></p>',hl:['msg']},
+    {t:'8 · ניקוי',d:'<p>הנוירוטרנסמיטר מתנתק וחוזר למרווח. <b>אנזימים מפרקים</b> אותו, או שהוא <b>נספג בחזרה</b> בכפתור הסופי וממוחזר. כך הסינפסה מוכנה למסר הבא.</p>',hl:['clean']}],n=>set(n));
+  seg('#syn-type',d=>{type=d.v;svg.classList.toggle('inh',type==='inh');$('#syn-msg').textContent=type==='exc'?'ירה!':'אל תירה!';$('#syn-msg-bg').setAttribute('fill',type==='exc'?'var(--exc)':'var(--inh)');st.go(st.i)});
+})();
+
+/* ---------- chain ---------- */
+(function(){
+  const g=$('#chain-nodes'),NX={A:560,B:400,C:240,D:80},nodes={};
+  for(const k in NX){nodes[k]=el('circle',{cx:NX[k],cy:100,r:34,class:'cnode'},g);txt(g,NX[k],108,k,'tm tb',{style:'font-size:22px'});txt(g,NX[k],160,'','ts',{id:'cs-'+k})}
+  let a=false;
+  function draw(){const s={A:a,B:!a,C:a,D:a};
+    for(const k in s){nodes[k].classList.toggle('on',s[k]);$('#cs-'+k).textContent=s[k]?'יורה':'שקט'}
+    $('#pl-ab').classList.toggle('go',s.A);$('#pl-bc').classList.toggle('go',s.B);$('#pl-cd').classList.toggle('go',s.C);
+    const b=$('#chain-a');b.textContent=a?'כבי את A':'הפעילי את A';b.setAttribute('aria-pressed',a?'true':'false');
+    $('#chain-text').innerHTML=a?'<p><b>A יורה</b> ומעכב את B.</p><p>B משתתק, ולכן <b>מפסיק לעכב</b> את C.</p><p>C חופשי לירות, ומעורר את D.</p><p><b>D מתעורר.</b> הפעלנו מעכב, והתוצאה בסוף השרשרת היא עירור.</p>':'<p><b>A שקט</b>, ולכן B לא מעוכב ויורה.</p><p>B מעכב את C, ו־C שקט.</p><p>C לא מעורר את D, ולכן <b>D שקט</b>.</p>'}
+  $('#chain-a').onclick=()=>{a=!a;draw()};draw();
+})();
+
+/* ---------- neurotransmitters ---------- */
+(function(){
+  const NT=[
+    {id:'ach',n:'אצטילכולין',en:'acetylcholine',r:'<b>זיכרון</b>. בחיבור בין עצב לשריר הוא <b>מעורר</b>, והשריר מתכווץ.',b:'<b>אלצהיימר</b>: אובדן הזיכרון נגרם כנראה מהתנוונות הנוירונים שמשחררים אצטילכולין. <b>בוטוליזם</b>: רעלן משימורים מקולקלים מונע את שחרורו בשרירי הנשימה. <b>קורארה</b>: רעל חיצים שחוסם את הקולטנים שלו ומשתק.'},
+    {id:'gaba',n:'גאבא',en:'GABA',r:'<b>המעכב הנפוץ ביותר במוח</b> (בכשליש מהסינפסות). מרסן פעילות עצבית.',b:'רמה נמוכה ← פעילות־יתר עצבית ← <b>חרדה</b>. <b>ואליום</b> ו<b>קסנקס</b> (בנזודיאזפינים) לא נקשרים במקומו, אלא עוזרים לו להיקשר ביעילות.'},
+    {id:'ne',n:'נורפינפרין',en:'norepinephrine',r:'<b>מצב רוח</b>. מעורב בהפרעות במצב הרוח ובסכיזופרניה.',b:'סוגים מסוימים של <b>דיכאון</b>: תרופות שמעלות את רמתו משפרות את מצב הרוח.'},
+    {id:'da',n:'דופמין',en:'dopamine',r:'מצב רוח, <b>תנועה</b>, אימפולסיביות, יציבות וגמישות קוגניטיבית. <span class="src guide">מדריך</span>',b:'<b>סכיזופרניה</b>: רמה גבוהה, ומטפלים בתרופות שמורידות אותה. מינון גבוה מדי ← תסמינים כמו של <b>פרקינסון</b>. פרקינסון עצמו = התנוונות הנוירונים שמייצרים את רוב הדופמין.'},
+    {id:'ser',n:'סרוטונין',en:'serotonin',r:'מיוצר ב<b>גזע המוח</b>, אזור של <b>עוררות</b> ותהליכים אוטומטיים. קשור גם ל<b>מצב רוח</b>.',b:'<b>ל.ס.ד.</b> מדכא את נוירוני הסרוטונין ← חוויות חושיות עזות, לפעמים הזיות. <b>פרוזאק</b> נגד דיכאון: מונע את פינוי הסרוטונין מהמרווח.'},
+    {id:'end',n:'אנדורפינים',en:'endorphins',r:'שליטה ב<b>כאב</b> ובהתנהגויות רגשיות. השם = "מורפיום מבפנים".',b:'<b>נלוקסון</b> חוסם את הקשירה שלהם, ואז <b>דיקור</b> ו<b>פלסבו</b> כבר לא מקלים כאב. כלומר, בדרך כלל האנדורפינים מתווכים את ההקלה.'}];
+  const byId=Object.fromEntries(NT.map(x=>[x.id,x]));
+  const chips=$('#nt-chips');
+  function show(id){const x=byId[id];$$('.chip',chips).forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===id?'true':'false'));
+    $('#nt-info').innerHTML='<h4>'+x.n+' <span class="star">★</span> <span class="en">'+x.en+'</span></h4><dl><dt>התפקיד</dt><dd>'+x.r+'</dd><dt>כשמשהו משתבש</dt><dd>'+x.b+'</dd></dl>'}
+  NT.forEach(x=>{const b=document.createElement('button');b.type='button';b.className='chip';b.dataset.id=x.id;b.textContent=x.n;b.onclick=()=>show(x.id);chips.appendChild(b)});show('ach');
+  const Q=[['אובדן הזיכרון באלצהיימר','ach','הנוירונים שמשחררים אצטילכולין מתנוונים.'],['בוטוליזם: רעלן משימורים מקולקלים משתק את שרירי הנשימה','ach','הרעלן מונע את שחרור האצטילכולין, שמכווץ את השרירים.'],
+    ['רמה נמוכה שלו ← פעילות־יתר עצבית ← חרדה','gaba','גאבא הוא המעכב הנפוץ ביותר. כשהוא חסר, אין מי שירסן.'],['ואליום וקסנקס עוזרים לו להיקשר ביעילות','gaba','בנזודיאזפינים מגבירים את פעולת הגאבא.'],
+    ['תרופות שמעלות את רמתו משפרות סוגים מסוימים של דיכאון','ne','נורפינפרין קשור למצב רוח.'],['פרקינסון: הנוירונים שמייצרים את רוב החומר הזה מתנוונים','da','דופמין קשור לתנועה. בפרקינסון יש רעד והליכה מדדה.'],
+    ['בסכיזופרניה מטפלים בתרופות שמורידות את רמתו','da','רמה גבוהה של דופמין קשורה לסכיזופרניה.'],['מיוצר בגזע המוח, ול.ס.ד. מדכא את הנוירונים שלו','ser','סרוטונין קשור לעוררות ולמצב רוח.'],
+    ['פרוזאק מונע את פינויו מהמרווח הסינפטי','ser','כך נשאר יותר סרוטונין בסינפסה, וזה עוזר נגד דיכאון.'],['נלוקסון חוסם אותו, ואז דיקור ופלסבו כבר לא מקלים כאב','end','האנדורפינים הם ה"מורפיום מבפנים" ששולט בכאב.']];
+  let order=[],qi=0,ok=0,done=0,answered=false;
+  const opts=$('#q-opts');
+  NT.forEach(x=>{const b=document.createElement('button');b.type='button';b.className='chip';b.dataset.id=x.id;b.textContent=x.n;b.onclick=()=>answer(x.id,b);opts.appendChild(b)});
+  function start(){order=Q.map((_,i)=>i).sort(()=>Math.random()-.5);qi=0;ok=0;done=0;ask()}
+  function ask(){answered=false;const q=Q[order[qi]];$('#q-clue').textContent=q[0];$('#q-fb').innerHTML='';$$('.chip',opts).forEach(b=>b.classList.remove('ok','no'));$('#q-score').textContent='רמז '+(qi+1)+' מתוך '+Q.length+' · נכון: '+ok;$('#q-next').textContent='רמז הבא ←'}
+  function answer(id,b){if(answered)return;answered=true;done++;const q=Q[order[qi]];const right=id===q[1];if(right)ok++;
+    b.classList.add(right?'ok':'no');if(!right)$$('.chip',opts).find(x=>x.dataset.id===q[1]).classList.add('ok');
+    $('#q-fb').innerHTML=(right?'<span class="y">נכון.</span> ':'<span class="n">לא.</span> זה '+byId[q[1]].n+'. ')+q[2];
+    $('#q-score').textContent='רמז '+(qi+1)+' מתוך '+Q.length+' · נכון: '+ok;if(qi===Q.length-1)$('#q-next').textContent='מהתחלה ←'}
+  $('#q-next').onclick=()=>{if(qi===Q.length-1&&answered){start();return}if(qi<Q.length-1){qi++;ask()}};
+  start();
+})();
+
+/* ---------- impulsivity ---------- */
+(function(){
+  Stepper($('#imp-lab'),[
+    {t:'1 · וריאציה בגן',d:'<p>לגנים מסוימים יש כמה גרסאות, למשל <b>DRD4</b> ו־<b>COMT</b>. אנשים שונים נושאים גרסאות שונות.</p>',hl:['g1']},
+    {t:'2 · פעילות הדופמין',d:'<p>הגרסה משפיעה על <b>רמת הפעילות של הדופמין</b> במוח.</p>',hl:['g2'],vis:['g1']},
+    {t:'3 · תכנון, יציבות וגמישות',d:'<p>הדופמין פועל באזורי מוח שחיוניים ל<b>תכנון</b>, ועוזר ל<b>יציבות</b> ול<b>גמישות קוגניטיבית</b> (Bilder et al., 2004).</p>',hl:['g3'],vis:['g1','g2']},
+    {t:'4 · התנהגות',d:'<p>תקלה בפעולת הדופמין יכולה להוביל להתנהגות אימפולסיבית או לא יציבה.</p><p>הגן לא "יוצר" אימפולסיביות. הוא משפיע <b>בעקיפין</b>, וכנראה הוא רק אחד מגנים רבים.</p>',hl:['g4'],vis:['g1','g2','g3']}]);
+  const H=['<p><b>"מדענים גילו את גן האימפולסיביות"</b></p><p>מטעה: נשמע כאילו גן אחד יוצר התנהגות.</p>','<p><b>"מדענים גילו איך גן אחד, אולי אחד מני רבים, משפיע על השימוש של המוח בדופמין"</b> <span class="src book">ספר</span></p><p>מדויק: הגן משפיע בעקיפין, דרך הדופמין.</p>'];
+  seg('#imp-head',d=>$('#imp-head-t').innerHTML=H[+d.v]);$('#imp-head-t').innerHTML=H[0];
+})();
+
+/* ---------- methods ---------- */
+(function(){
+  const M={injury:{n:'פציעה קיימת',f:'i',w:'חוקרים אדם שמוחו נפגע בתאונה או במחלה, ומשווים את מקום הפגיעה לשינוי בהתנהגות. <b>החיסרון:</b> אין שליטה על מיקום הפגיעה ועל היקפה.',e:'פיניאס גייג\' (Phineas Gage), 1848: מוט ברזל חדר לראשו. האינטלקט, הדיבור והתנועה נשמרו, אבל האישיות השתנתה. המסקנה: יש אזורים במוח שאחראים על אישיות ועל התנהגות רציונלית.'},
+    autopsy:{n:'ניתוח לאחר המוות',f:'i',w:'בודקים את המוח אחרי המוות, ומקשרים את מה שמוצאים לתסמינים שהיו בחיים.',e:'פול ברוקה (Paul Broca): המטופל "טאן" אמר רק מילה אחת. אחרי מותו נמצאה פגיעה בחלק הקדמי השמאלי, וגם אצל מטופלים נוספים עם ליקויי שפה. כך התגלה <b>אזור ברוקה</b> ★.'},
+    lesion:{n:'פגע ממוקד ★',en:'lesion',f:'i',w:'החוקר פוגע <b>בכוונה</b> באזור קטן ומוגדר (מסיר, חותך קשרים, הורס) ובודק מה השתנה. <b>רק בבעלי חיים.</b>',e:'משווים את התוצאות למקרים קליניים בבני אדם.'},
+    rtms:{n:'rTMS ★',en:'repetitive transcranial magnetic stimulation',f:'i',w:'"גרייה מגנטית חוזרת חוצה גולגולת". פולסים מגנטיים על הקרקפת <b>משביתים זמנית</b> אזור. זה "פגע" זמני והפיך <b>בבני אדם</b>, בלי נזק.',e:'קוסלין ועמיתיו (Kosslyn et al., 1999): rTMS לאזורי הראייה פגע גם בראייה וגם בדמיון של אותו תרשים. אותם אזורים פועלים כשרואים וכשמדמיינים.'},
+    stim:{n:'גרייה ישירה ★',en:'stimulation',f:'i',w:'אלקטרודה במוח שולחת זרם חשמלי חלש, ובודקים איזו התנהגות מופיעה.',e:'וולטר הס (Walter Hess): גירה אזורים במוחם של חתולים. לפי מקום האלקטרודה הופיעו שינה, עוררות מינית, חרדה או אימה, וכשהזרם נפסק ההתנהגות נפסקה.'},
+    eeg:{n:'EEG ★',en:'electroencephalogram',f:'r',w:'"אלקטרו־אנצפלוגרם". אלקטרודות על הקרקפת מודדות <b>פעילות חשמלית</b> של אזורים רחבים בקליפת המוח.',e:'סומר ועמיתיו (Sommer et al., 1995): דפוס ה־EEG בזמן הלמידה ניבא אילו פרצופים ייזכרו אחר כך.'},
+    pet:{n:'PET ★',en:'positron emission tomography',f:'r',w:'"טומוגרפיה של פליטת פוזיטרונים". מזריקים חומר רדיואקטיבי לא מזיק. תאים פעילים קולטים אותו, וגלאים קולטים את הקרינה. מראה <b>איפה יש פעילות</b>.',e:'לראות, לשמוע, לומר ולייצר מילים מפעילים אזורים שונים (תרשים 3.12).'},
+    mri:{n:'MRI ★',en:'magnetic resonance imaging',f:'r',w:'"הדמיית תהודה מגנטית". שדה מגנטי וגלי רדיו. מראה את <b>המבנה</b>, בתמונה המפורטת ביותר.',e:'עוזר לאתר נזק במוח חי, בלי ניתוח.'},
+    fmri:{n:'fMRI ★',en:'functional MRI',f:'r',w:'"הדמיית תהודה מגנטית תפקודית". מגלה שינויים בזרימת הדם לתאים פעילים. מראה <b>מבנה וגם תפקוד</b>.',e:'משמש לחקר קשב, תפיסה, שפה וזיכרון.'}};
+  function show(id){const m=M[id];$$('#methods .chip').forEach(b=>{if(b.closest('#m-int,#m-rec'))b.setAttribute('aria-pressed',b.dataset.id===id?'true':'false')});
+    $('#m-info').innerHTML='<p><b>'+m.n.replace('★','<span class="star">★</span>')+'</b>'+(m.en?' <span class="en">'+m.en+'</span>':'')+' · '+(m.f==='i'?'משנה את המוח':'רק מודד')+'</p><p>'+m.w+'</p><p><span class="src book">ספר</span> '+m.e+'</p>'}
+  for(const id in M){const b=document.createElement('button');b.type='button';b.className='chip';b.dataset.id=id;b.textContent=M[id].n.replace(' ★','');b.onclick=()=>show(id);(M[id].f==='i'?$('#m-int'):$('#m-rec')).appendChild(b)}
+  show('injury');
+  const Q=[['א. מה התפקיד של מבנה מוחי מסוים בבני אדם?',['rtms','fmri','pet','injury'],'אסור לפגוע בכוונה במוח של אדם. rTMS משבית זמנית ובלי נזק, ההדמיה (fMRI, PET) מראה מה פעיל בזמן משימה, ואפשר גם לחקור פציעה קיימת.'],
+    ['ב. איפה בדיוק הפגיעה במוח של אדם חי?',['mri','fmri'],'MRI נותן את התמונה המפורטת ביותר של המבנה, בלי ניתוח.'],
+    ['ג. רישום של הפעילות החשמלית של המוח כולו',['eeg'],'אלקטרודות על כל הקרקפת קולטות פעילות חשמלית של אזורים רחבים.'],
+    ['ד. בדיקת מוחות של אנשים שסבלו ממחלה, אחרי מותם',['autopsy'],'כמו ברוקה: מקשרים בין מה שנמצא במוח לבין התסמינים שהיו בחיים.'],
+    ['ה. מה התפקוד של אזור מסוים במוח של עכברים?',['lesion'],'בבעלי חיים מותר לפגוע באזור מוגדר. החוקר שולט במיקום ובהיקף, ורואה מה השתנה.'],
+    ['ו. גרייה של אזור במוח של עכברים ובדיקת ההשפעה על ההתנהגות',['stim'],'אלקטרודה מגרה את האזור, ובודקים איזו התנהגות מופיעה, כמו אצל הס.']];
+  const opts=$('#mq-opts');let qi=0,ok=0,answered=false;
+  for(const id in M){const b=document.createElement('button');b.type='button';b.className='chip';b.dataset.id=id;b.textContent=M[id].n.replace(' ★','');b.onclick=()=>ans(id,b);opts.appendChild(b)}
+  function ask(){answered=false;$('#mq-clue').textContent=Q[qi][0];$('#mq-fb').innerHTML='';$$('.chip',opts).forEach(b=>b.classList.remove('ok','no'));$('#mq-score').textContent='שאלה '+(qi+1)+' מתוך '+Q.length+' · נכון: '+ok;$('#mq-next').textContent=qi===Q.length-1?'מהתחלה ←':'שאלה הבאה ←'}
+  function ans(id,b){if(answered)return;answered=true;const q=Q[qi],right=q[1].includes(id);if(right)ok++;b.classList.add(right?'ok':'no');$$('.chip',opts).forEach(x=>{if(q[1].includes(x.dataset.id))x.classList.add('ok')});
+    $('#mq-fb').innerHTML=(right?'<span class="y">נכון.</span> ':'<span class="n">לא מתאים.</span> ')+(q[1].length>1?'מתאימות: '+q[1].map(k=>M[k].n.replace(' ★','')).join(', ')+'. ':'')+q[2];$('#mq-score').textContent='שאלה '+(qi+1)+' מתוך '+Q.length+' · נכון: '+ok}
+  $('#mq-next').onclick=()=>{if(qi===Q.length-1){qi=0;ok=0}else qi++;ask()};ask();
+})();
+
+/* ---------- nervous system ---------- */
+(function(){
+  const svg=$('#ns-tree');
+  const N=[{id:'root',x:360,y:30,t:'מערכת העצבים',s:''},{id:'cns',x:560,y:104,t:'מרכזית',s:'מוח + מוח השדרה'},{id:'pns',x:200,y:104,t:'היקפית',s:'כל העצבים בחוץ'},
+    {id:'brain',x:640,y:178,t:'מוח',s:''},{id:'cord',x:480,y:178,t:'מוח השדרה',s:''},{id:'som',x:300,y:178,t:'סומטית',s:'רצונית'},{id:'aut',x:120,y:178,t:'אוטונומית',s:'לא רצונית'},
+    {id:'sym',x:200,y:250,t:'סימפטטית',s:'חירום'},{id:'para',x:66,y:250,t:'פרסימפטטית',s:'שגרה'}];
+  const E=[['root','cns'],['root','pns'],['cns','brain'],['cns','cord'],['pns','som'],['pns','aut'],['aut','sym'],['aut','para']];
+  const P=Object.fromEntries(N.map(n=>[n.id,n]));
+  E.forEach(([a,b])=>{const p=P[a],c=P[b],my=(p.y+c.y)/2;el('path',{d:'M'+p.x+','+(p.y+20)+' L'+p.x+','+my+' L'+c.x+','+my+' L'+c.x+','+(c.y-20),fill:'none',stroke:'var(--line)','stroke-width':2},svg)});
+  const I={root:['מערכת העצבים','nervous system','מיליארדי נוירונים, במוח ובסיבי העצבים בכל הגוף.'],
+    cns:['מערכת העצבים המרכזית ★','CNS','מוח הגולגולת + מוח השדרה. משלבת ומתאמת את כל תפקודי הגוף: מעבדת את המסרים שנכנסים ושולחת הוראות לאיברים.'],
+    brain:['המוח','brain','החלק החשוב ביותר במערכת העצבים המרכזית. שלוש השכבות שלו בתחנה "מבני המוח".'],
+    cord:['מוח השדרה ★','spinal cord','מחבר את המוח למערכת ההיקפית, ועובר בתוך עמוד השדרה. מתאם בין ימין לשמאל של הגוף, ואחראי לרפלקסים פשוטים (תחנת הרפלקס). פגיעה בו גורמת לשיתוק, וככל שהפגיעה גבוהה יותר, השיתוק רחב יותר.'],
+    pns:['מערכת העצבים ההיקפית ★','PNS','כל העצבים שמחוץ למוח ולמוח השדרה. למרכזית אין מגע ישיר עם העולם: ההיקפית מביאה לה מידע מהחושים ומוליכה הוראות לאיברים ולשרירים.'],
+    som:['מערכת העצבים הסומטית ★','SNS','<b>רצונית.</b> מפעילה את שרירי השלד ומחזירה למוח מידע מהגוף. <span class="src book">ספר</span> בהקלדה המוח מחליט מה לכתוב, והסומטית מזיזה את האצבעות ומדווחת למוח על מיקומן.'],
+    aut:['מערכת העצבים האוטונומית ★','ANS','<b>לא רצונית.</b> שומרת על תהליכי החיים הבסיסיים: נשימה, עיכול, עוררות. פועלת 24 שעות ביממה, גם בשינה. <span class="src guide">מדריך</span> היא מתמודדת עם איום ועם תחזוקה, ולכן יש לה שני ענפים מנוגדים.'],
+    sym:['הענף הסימפטטי ★','sympathetic division','"פתרון בעיות מיד": מפעיל את הגוף במצבי חירום, בתגובת <b>לחימה־מנוסה</b>.'],
+    para:['הענף הפרסימפטטי ★','parasympathetic division','"תחזוקה": מנהל את הפעילות השגרתית, מרגיע אחרי הסכנה ושומר אנרגיה.']};
+  const groups={};
+  N.forEach(n=>{const g=el('g',{class:'nsn click',tabindex:0,role:'button','aria-label':n.t},svg);el('rect',{x:n.x-59,y:n.y-20,width:118,height:40,rx:8},g);
+    if(n.s){txt(g,n.x,n.y-2,n.t,'t tb');txt(g,n.x,n.y+13,n.s,'ts',{style:'font-size:10.5px'})}else txt(g,n.x,n.y+5,n.t,'t tb');
+    g.addEventListener('click',()=>pick(n.id));g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(n.id)}});groups[n.id]=g});
+  function pick(id){for(const k in groups)groups[k].classList.toggle('on',k===id);const x=I[id];$('#ns-info').innerHTML='<h4>'+x[0].replace('★','<span class="star">★</span>')+' <span class="en">'+x[1]+'</span></h4><p style="margin:6px 0 0">'+x[2]+'</p>'}
+  pick('aut');
+  const T=[{k:'pupil',n:'אישון',s:'מרחיב',p:'מכווץ'},{k:'tears',n:'בלוטות דמע',s:'מעכב',p:'מגרה'},{k:'saliva',n:'רוק',s:'מעכב ריור',p:'מגביר ריור'},{k:'sweat',n:'זיעה',s:'מגביר הזעה',p:'(לא בתרשים)'},
+    {k:'heart',n:'לב',s:'מאיץ',p:'מאט'},{k:'lungs',n:'סימפונות',s:'מרחיב',p:'מכווץ'},{k:'gut',n:'עיכול',s:'מעכב',p:'מגביר'},{k:'adr',n:'אדרנלין',s:'מפריש',p:'(לא בתרשים)'},{k:'bladder',n:'שלפוחית השתן',s:'מרפה את הכיווץ',p:'מכווץ'}];
+  const drop=(x,y,c,dl)=>'<path class="drop" style="animation-delay:'+dl+'s" d="M'+x+','+y+' q3,5 0,7 q-3,-2 0,-7z" fill="'+c+'"/>';
+  function icon(k,sym){switch(k){
+    case 'pupil':return '<ellipse cx="32" cy="24" rx="27" ry="15" fill="var(--paper)" stroke="var(--muted)"/><circle cx="32" cy="24" r="13" fill="var(--l3)" opacity=".55"/><circle cx="32" cy="24" r="'+(sym?10:4)+'" fill="var(--ink)" style="transition:r .5s"/>';
+    case 'tears':return '<g class="'+(sym?'off':'')+'"><path d="M8,18 Q32,2 56,18 Q32,32 8,18Z" fill="var(--paper)" stroke="var(--muted)"/><circle cx="32" cy="18" r="6" fill="var(--ink)"/>'+drop(50,24,'var(--l3)',0)+drop(46,26,'var(--l3)',.6)+'</g>';
+    case 'saliva':return '<g class="'+(sym?'off':'')+'"><path d="M12,16 Q32,34 52,16" fill="none" stroke="var(--muted)" stroke-width="3"/>'+drop(30,26,'var(--l3)',0)+drop(36,28,'var(--l3)',.5)+'</g>';
+    case 'sweat':return '<g class="'+(sym?'':'off')+'"><path d="M8,30 Q32,6 56,30" fill="none" stroke="var(--muted)" stroke-width="3"/>'+drop(22,12,'var(--l3)',0)+drop(40,10,'var(--l3)',.4)+drop(32,16,'var(--l3)',.8)+'</g>';
+    case 'heart':return '<path class="heart" style="--hb:'+(sym?'.45s':'1.3s')+'" d="M32,42 C10,28 10,10 22,10 C28,10 31,14 32,17 C33,14 36,10 42,10 C54,10 54,28 32,42Z" fill="var(--bad)"/>';
+    case 'lungs':return '<path d="M32,4 L32,22 M32,22 L16,42 M32,22 L48,42" fill="none" stroke="var(--l1)" stroke-linecap="round" stroke-width="'+(sym?9:3.5)+'" style="transition:stroke-width .5s"/>';
+    case 'gut':return '<g class="'+(sym?'off':'')+'"><path d="M4,24 q7,-12 14,0 t14,0 t14,0 t14,0" fill="none" stroke="var(--line)" stroke-width="7"/><path class="wave" d="M4,24 q7,-12 14,0 t14,0 t14,0 t14,0" fill="none" stroke="var(--l1)" stroke-width="3"/></g>';
+    case 'adr':return '<g class="'+(sym?'':'off')+'"><path d="M16,40 Q32,22 48,40Z" fill="var(--l2)" opacity=".6"/>'+drop(26,14,'var(--l2)',0)+drop(34,10,'var(--l2)',.4)+drop(40,16,'var(--l2)',.8)+'</g>';
+    case 'bladder':return '<ellipse cx="32" cy="26" rx="'+(sym?20:12)+'" ry="'+(sym?15:9)+'" fill="var(--l1)" opacity=".5" stroke="var(--l1)" style="transition:rx .5s,ry .5s"/>'}}
+  function ans(v){const sym=v==='sym';$('#ans-tiles').innerHTML=T.map(t=>'<div class="tile"><svg viewBox="0 0 64 48" aria-hidden="true">'+icon(t.k,sym)+'</svg><b>'+t.n+'</b><span>'+(sym?t.s:t.p)+'</span></div>').join('');
+    $('#ans-text').innerHTML=sym?'<p><b>חירום.</b> כלב גדול רץ אלייך בנביחות: הלב דופק, הפה יבש, הנשימה מהירה. <span class="src mine">הדוגמה: לא מהספר</span> הגוף מעביר דם מהאיברים הפנימיים לשרירים, ולכן העיכול נעצר והלב מאיץ <span class="src book">ספר</span>.</p>':'<p><b>שגרה.</b> מתברר שהכלב רק רוצה ללקק: הלב מאט והנשימה נרגעת. <span class="src mine">לא מהספר</span> הענף הפרסימפטטי מחזיר את השגרה: העיכול חוזר, הלב מאט, והגוף שומר אנרגיה.</p>'}
+  seg('#ans-seg',d=>ans(d.v));ans('sym');
+})();
+
+/* ---------- brain ---------- */
+(function(){
+  const svg=$('#br');
+  const L=['מערכת אנדוקרינית (לא אחת השכבות)','I · גזע המוח, תלמוס ומוחון','II · המערכת הלימבית','III · המוח הגדול'];
+  const B={cerebrum:['המוח הגדול ★','cerebrum',3,'השכבה החיצונית, כשני שלישים ממסת המוח. בחוץ: קליפת המוח ★, שכבה בעובי כרבע סנטימטר.','חשיבה, תכנון, ארגון מידע חושי ותיאום תנועות. כאן נמצאת התודעה. מחולק לשתי המיספרות ★ ולארבע אונות.'],
+    cc:['כפיס המוח ★','corpus callosum',3,'בין שתי ההמיספרות.','מסה עבה של סיבי עצב שמעבירה מסרים מצד לצד. אצל חצויי מוח הוא מנותק (תחנת חצויי מוח).'],
+    medulla:['מוח מוארך ★','medulla',1,'הקצה העליון של מוח השדרה.','מרכז הנשימה, לחץ הדם ופעילות הלב. נזק כאן עלול לגרום למוות. כאן סיבי העצב מצטלבים, ולכן צד שמאל של המוח קשור לצד ימין של הגוף.'],
+    pons:['גשר ★','pons',1,'מעל המוח המוארך.','מעביר מידע למבנים אחרים בגזע המוח ולמוחון. pons בלטינית = גשר.'],
+    reticular:['תצורת הרשת ★','reticular formation',1,'רשת צפופה של תאי עצב בתוך גזע המוח.','"השומרת" של המוח: מעוררת את הקורטקס לשים לב לגירוי חדש, ושומרת על ערנות גם בשינה. נזק חמור: תרדמת.'],
+    brainstem:['גזע המוח ★','brainstem',1,'בבסיס המוח, בהמשך למוח השדרה.','כולל את המוח המוארך, הגשר ותצורת הרשת. אחראי לתהליכי החיים הבסיסיים: נשימה, דופק, עוררות.'],
+    thalamus:['תלמוס ★','thalamus',1,'מעל גזע המוח.','"תחנת ממסר": מעביר את המידע החושי לאזור המתאים בקורטקס. למשל, מידע מהעיניים נשלח לאזורי הראייה.'],
+    cerebellum:['מוחון ★','cerebellum',1,'צמוד לגזע המוח, בבסיס הגולגולת מאחור.','שיווי משקל ותיאום תנועה. נזק: תנועות קופצניות ולא מתואמות. גם למידה וביצוע של רצף תנועות.'],
+    hippocampus:['היפוקמפוס ★','hippocampus',2,'המבנה הגדול במערכת הלימבית.','רכישת זיכרונות חדשים: אחסון מידע חדש בזיכרון לטווח ארוך.','המטופל ה"מ (H.M.): אחרי שהוסרו חלקים מההיפוקמפוס שלו, לא הצליח לאחסן מידע חדש. אבל עדיין למד מיומנויות חדשות.'],
+    amygdala:['אמיגדלה ★','amygdala',2,'במערכת הלימבית.','בקרה רגשית ויצירת זיכרונות רגשיים. ידע על איום וסכנה.','מי שהאמיגדלה שלו פגועה מתקשה לזהות בפנים של אחרים רגשות שליליים, בעיקר פחד.'],
+    hypothalamus:['היפותלמוס ★','hypothalamus',2,'מהמבנים הקטנים במוח, מתחת לתלמוס.','מווסת אכילה, שתייה, חום גוף ועוררות מינית. שומר על הומאוסטזיס ★, האיזון הפנימי. מווסת גם את המערכת ההורמונלית.','כשהגוף מתקרר, הוא מכווץ כלי דם או גורם לצמרמורת.'],
+    pituitary:['בלוטת יותרת המוח ★','pituitary gland',0,'תלויה מתחת להיפותלמוס.','"בלוטת העל" של המערכת האנדוקרינית: מפעילה את שאר הבלוטות (תחנת ההורמונים).'],
+    frontal:['אונת המצח ★','frontal lobe',3,'מקדימה: לפני המענית המרכזית ומעל החריץ הצדי.','בקרת תנועה ופעילויות קוגניטיביות: תכנון, קבלת החלטות, הצבת יעדים. כאן הקורטקס המוטורי ואזור ברוקה.','פגיעה בה משנה התנהגות ואישיות, כמו אצל פיניאס גייג\'.'],
+    parietal:['אונת הקדקוד ★','parietal lobe',3,'מיד מאחורי המענית המרכזית.','תחושות מגע, כאב וחום. כאן הקורטקס הסומטו־סנסורי.'],
+    occipital:['אונת העורף ★','occipital lobe',3,'בחלק האחורי של הראש.','ראייה: היעד הסופי של המידע החזותי. כאן קורטקס הראייה.'],
+    temporal:['אונת הרקה ★','temporal lobe',3,'מתחת לחריץ הצדי, בכל צד.','שמיעה והבנת שפה. כאן קורטקס השמע ואזור ורניקה. הרקה צמודה לאוזן, ולכן היא שומעת.'],
+    motor:['קורטקס מוטורי ★','motor cortex',3,'באונת המצח, ממש לפני המענית המרכזית.','שולט ביותר מ־600 השרירים הרצוניים. מוצלב והפוך, והשטח לפי הדיוק: לאצבעות ולשרירי הדיבור יש שטח גדול.'],
+    somato:['קורטקס סומטו־סנסורי ★','somatosensory cortex',3,'באונת הקדקוד, ממש אחרי המענית המרכזית.','מעבד מידע על טמפרטורה, מגע, תנוחת הגוף וכאב. לשפתיים, ללשון ולאצבעות יש שטח גדול.'],
+    broca:['אזור ברוקה ★','Broca\'s area',3,'באונת המצח, בצד שמאל.','שפה. פול ברוקה (Paul Broca) מצא פגיעה כאן אצל מטופלים עם ליקויי שפה.'],
+    wernicke:['אזור ורניקה ★','Wernicke\'s area',3,'באונת הרקה.','הבנת שפה. קרל ורניקה (Carl Wernicke) גילה ב־1874 שמי שנפגע כאן מתקשה להבין שפה.'],
+    auditory:['קורטקס השמע ★','auditory cortex',3,'בשתי אונות הרקה.','כל צד מקבל מידע משתי האוזניים. באחת ההמיספרות הוא אחראי גם להבנת שפה.'],
+    visual:['קורטקס הראייה ★','visual cortex',3,'באונת העורף.','השטח הגדול ביותר מוקדש למידע ממרכז הרשתית, שמעביר את המידע החזותי המפורט ביותר.']};
+  const st=s=>s.replace(/★/g,'<span class="star">★</span>');
+  function pick(id){const b=B[id];$$('#br [data-s]').forEach(e=>e.classList.toggle('on',e.dataset.s===id));
+    $('#br-info').innerHTML='<h4>'+st(b[0])+' <span class="en">'+b[1]+'</span></h4><dl><dt>שכבה</dt><dd>'+L[b[2]]+'</dd><dt>איפה</dt><dd>'+st(b[3])+'</dd><dt>תפקיד</dt><dd>'+st(b[4])+'</dd>'+(b[5]?'<dt>עדות <span class="src book">ספר</span></dt><dd>'+b[5]+'</dd>':'')+'</dl>'}
+  $$('#br [data-s]').forEach(e=>e.addEventListener('click',()=>pick(e.dataset.s)));
+  seg('#br-layer',d=>svg.dataset.layer=d.v);
+  seg('#br-view',d=>{const lat=d.v==='lat';$('#view-lat').toggleAttribute('hidden',!lat);$('#view-med').toggleAttribute('hidden',lat);$('#br-areas-row').hidden=!lat;pick(lat?'frontal':'thalamus')});
+  $('#br-areas').onclick=function(){const on=!svg.classList.contains('show-areas');svg.classList.toggle('show-areas',on);this.setAttribute('aria-pressed',on?'true':'false');this.textContent=on?'הסתירי אזורים תפקודיים':'הראי אזורים תפקודיים';if(on)pick('motor')};
+  pick('thalamus');
+})();
+
+/* ---------- split brain ---------- */
+(function(){
+  let F='L',H='L',cut=true,timers=[];
+  const side=h=>h==='L'?'השמאלית':'הימנית';
+  function pear(x,y,g){el('path',{d:'M'+x+','+(y-14)+' C'+(x+6)+','+(y-14)+' '+(x+6)+','+(y-6)+' '+(x+10)+','+(y+2)+' C'+(x+14)+','+(y+10)+' '+(x+8)+','+(y+16)+' '+x+','+(y+16)+' C'+(x-8)+','+(y+16)+' '+(x-14)+','+(y+10)+' '+(x-10)+','+(y+2)+' C'+(x-6)+','+(y-6)+' '+(x-6)+','+(y-14)+' '+x+','+(y-14)+' Z',fill:'var(--good)'},g);el('path',{d:'M'+x+','+(y-14)+' L'+(x+2)+','+(y-21),stroke:'var(--ink)','stroke-width':2},g)}
+  function cup(x,y,g){el('rect',{x:x-10,y:y-10,width:20,height:22,rx:3,fill:'var(--l3)'},g);el('path',{d:'M'+(x+10)+','+(y-4)+' q9,0 9,7 q0,7 -9,7',fill:'none',stroke:'var(--l3)','stroke-width':3},g)}
+  function reset(){timers.forEach(clearTimeout);timers=[];$$('#sp .sp-path').forEach(p=>p.classList.remove('on'));$$('#sp .hem').forEach(h=>h.classList.remove('on'));$$('#sp .hand').forEach(h=>h.classList.remove('act'));$('#sp-img').innerHTML='';$('#sp-held').innerHTML='';$('#sp-say').setAttribute('opacity',0)}
+  function cc(){$('#cc-ok').toggleAttribute('hidden',cut);$('#cc-cut').toggleAttribute('hidden',!cut)}
+  function intro(){$('#sp-text').innerHTML='<p>הנבדק מסתכל על הנקודה שבמרכז המסך. בחרי את התנאים ולחצי "הריצי את הניסוי".</p><p>ברירת המחדל היא הניסוי מתרשים 3.23: אגס בשדה השמאלי, חיפוש ביד שמאל.</p>'}
+  function run(){reset();const hem=F==='L'?'R':'L',other=hem==='L'?'R':'L',handHem=H==='L'?'R':'L',knows=!cut||handHem===hem,say=!cut||hem==='L';
+    pear(F==='L'?195:405,50,$('#sp-img'));
+    timers.push(setTimeout(()=>$('#vp-'+F).classList.add('on'),250));
+    timers.push(setTimeout(()=>{$('#hem'+hem).classList.add('on');if(!cut){$('#cc-path').classList.add('on');timers.push(setTimeout(()=>$('#hem'+other).classList.add('on'),500))}},1000));
+    timers.push(setTimeout(()=>{$('#hp-'+H).classList.add('on');$('#hand-'+H).classList.add('act');(knows?pear:cup)(H==='L'?185:415,386,$('#sp-held'));
+      $('#sp-say-t').textContent=say?'"זה אגס"':'לא יכול לומר';$('#sp-say').setAttribute('opacity',1);
+      $('#sp-text').innerHTML='<p>התמונה בשדה ה'+(F==='L'?'שמאלי':'ימני')+' מגיעה להמיספרה <b>'+side(hem)+'</b>.'+(cut?' כפיס המוח מנותק, ולכן היא נשארת שם.':' כפיס המוח שלם, ולכן היא עוברת גם לצד השני.')+'</p>'
+        +(say?'<p><b>אומר "אגס".</b> '+(hem==='L'?'ההמיספרה השמאלית, שמדברת, קיבלה את התמונה.':'המידע הגיע גם להמיספרה השמאלית, שמדברת.')+'</p>':'<p><b>לא יכול לומר מה ראה.</b> הדיבור בהמיספרה השמאלית, והיא לא קיבלה את התמונה.</p>')
+        +'<p>יד '+(H==='L'?'שמאל':'ימין')+' קשורה להמיספרה '+side(handHem)+'. '+(knows?'<b>היא מוצאת את האגס</b>'+(cut?', כי אותה המיספרה ראתה אותו.':'.'):'<b>היא תופסת ספל</b>, כי ההמיספרה הזו לא ראתה את האגס, והצד השני לא יכול "לספר" לה.')+'</p>'},2000))}
+  seg('#sp-field',d=>{F=d.v;reset();intro()});seg('#sp-hand',d=>{H=d.v;reset();intro()});seg('#sp-cc',d=>{cut=d.v==='cut';cc();reset();intro()});
+  $('#sp-run').onclick=run;cc();intro();
+})();
+
+/* ---------- endocrine ---------- */
+(function(){
+  const lab=$('#endo-lab'),cg=$('#endo-cells'),hg=$('#endo-h'),vessel=$('#vessel'),LEN=vessel.getTotalLength();
+  const C=[{x:230,n:'תאי עור',m:false},{x:360,n:'תאי שריר',m:false},{x:490,n:'בלוטות החלב',m:true}];
+  C.forEach(c=>{el('circle',{cx:c.x,cy:178,r:26,class:'tissue'},cg);txt(cg,c.x,140,c.n,'t tb',{style:'font-size:12.5px'});
+    [c.x-12,c.x+12].forEach(a=>el('path',{d:c.m?'M'+(a-7)+',198 L'+(a-7)+',210 L'+(a-3)+',210 L'+a+',203 L'+(a+3)+',210 L'+(a+7)+',210 L'+(a+7)+',198 Z':'M'+(a-7)+',198 L'+(a-7)+',210 L'+(a-3)+',210 L'+(a-3)+',205 L'+(a+3)+',205 L'+(a+3)+',210 L'+(a+7)+',210 L'+(a+7)+',198 Z',fill:c.m?'var(--l2)':'var(--muted)'},cg));
+    if(c.m)el('circle',{cx:c.x,cy:178,r:34,fill:'none',stroke:'var(--spark)','stroke-width':3,'data-id':'ring',class:'hidek'},cg)});
+  const hs=[...Array(7)].map(()=>el('path',{d:'M-6,5 L6,5 L0,-6 Z',fill:'var(--l2)',opacity:0},hg));
+  let step=1,raf=null,t0=0;
+  function loop(t){if(!t0)t0=t;const el_=(t-t0)/1000;
+    hs.forEach((h,k)=>{let x,y;if(step>=5&&k<2){x=k?502:478;y=214}else{const p=((el_*0.11+k/hs.length)%1)*LEN,pt=vessel.getPointAtLength(p);x=pt.x;y=pt.y}h.setAttribute('transform','translate('+x.toFixed(1)+','+y.toFixed(1)+')');h.setAttribute('opacity',1)});
+    raf=requestAnimationFrame(loop)}
+  Stepper(lab,[
+    {t:'1 · היריון',d:'<p>בהיריון משתנות רמות ההורמונים בגוף.</p>',hl:['preg']},
+    {t:'2 · ההיפותלמוס מפעיל',d:'<p><b>ההיפותלמוס</b>, המתווך בין המוח למערכת האנדוקרינית, משחרר הורמונים אל <b>בלוטת יותרת המוח</b>.</p>',hl:['hyp'],vis:['preg']},
+    {t:'3 · יותרת המוח מפרישה לדם',d:'<p><b>יותרת המוח</b>, "בלוטת העל", מפרישה הורמונים <b>לדם</b>.</p>',hl:['pit'],vis:['hyp']},
+    {t:'4 · הדם נושא לכל הגוף',d:'<p>הדם נושא את ההורמונים <b>לכל הגוף</b>, למרחק. הם עוברים ליד תאים רבים.</p>',vis:['hyp','pit']},
+    {t:'5 · רק תאי היעד מגיבים',d:'<p>רק לתאי <b>בלוטות החלב</b> יש <b>קולטנים</b> שמתאימים להורמון. תאי העור והשריר לא מגיבים, כי הקולטנים שלהם בצורה אחרת.</p>',hl:['ring'],vis:['hyp','pit']},
+    {t:'6 · ייצור חלב',d:'<p>בלוטות החלב מתחילות לייצר חלב.</p><p><span class="src book">ספר</span> לפי טבלה 3.1: יותרת המוח הקדמית מווסתת <b>יצירת</b> חלב, והאחורית את <b>הפרשת</b> החלב.</p>',hl:['milk','ring'],vis:['hyp','pit']}],
+    n=>{step=n;if(n>=4){if(!raf)raf=requestAnimationFrame(loop)}else{if(raf)cancelAnimationFrame(raf);raf=null;t0=0;hs.forEach(h=>h.setAttribute('opacity',0))}});
+  $('#race-go').onclick=()=>{const n=$('#race-n'),h=$('#race-h');[n,h].forEach(x=>{x.style.transition='none';x.style.width='0'});void n.offsetWidth;
+    n.style.transition='width .35s linear';h.style.transition='width 3s linear';n.style.width='100%';h.style.width='100%';
+    setTimeout(()=>{n.style.transition='width .8s';n.style.width='0'},1100)};
+})();
+
+/* ---------- plasticity ---------- */
+(function(){
+  const svg=$('#grow');seed=29;
+  txt(svg,450,22,'סביבה מועשרת','t tb');txt(svg,450,40,'צעצועים, מנהרות, חברים','ts');
+  txt(svg,150,22,'סביבה דלה','t tb');txt(svg,150,40,'כלוב ריק','ts');
+  el('path',{d:'M300,14 L300,256',stroke:'var(--line)','stroke-dasharray':'3 4'},svg);
+  const counts={};
+  function tree(cx,maxD,key){let n=0;
+    (function br(x,y,len,ang,d){const x2=x+len*Math.sin(ang),y2=y-len*Math.cos(ang);const isNew=d>3;
+      el('path',{d:'M'+x.toFixed(1)+','+y.toFixed(1)+' L'+x2.toFixed(1)+','+y2.toFixed(1),class:'sg'+(isNew?' new':''),'stroke-width':Math.max(1.2,6-d),pathLength:100,style:isNew?'transition-delay:'+((d-4)*.55).toFixed(2)+'s':''},svg);
+      if(d>=maxD){if(isNew){el('circle',{cx:x2.toFixed(1),cy:y2.toFixed(1),r:2.6,class:'syn-dot',style:'transition-delay:'+((d-3)*.55).toFixed(2)+'s'},svg);n++}return}
+      const sp=.32+srand()*.22;br(x2,y2,len*.74,ang-sp,d+1);br(x2,y2,len*.74,ang+sp,d+1);if(d>=3&&d<maxD-1&&srand()<.35)br(x2,y2,len*.6,ang+(srand()-.5)*.3,d+1)})(cx,236,44,0,1);
+    el('circle',{cx,cy:240,r:12,class:'tissue'},svg);counts[key]=n}
+  tree(450,7,'rich');tree(150,5,'poor');
+  function text(g){$('#grow-t').innerHTML=g?'<p>בסביבה המועשרת נוצרו הרבה יותר הסתעפויות וסינפסות חדשות (נקודות כתומות). זו <b>הגמישות</b>: ההתנסות משנה את המוח.</p><p>למטה: מה מצאו במחקרים עצמם.</p>':'<p>שני נוירונים בקורטקס של שתי חולדות מאותה המלטה. אחת עוברת לסביבה <b>מועשרת</b>, והשנייה לסביבה <b>דלה</b>.</p><p>לחצי "עוברים 30 יום".</p>'}
+  $('#grow-go').onclick=()=>{svg.classList.add('grown');text(true)};$('#grow-reset').onclick=()=>{svg.classList.remove('grown');text(false)};text(false);
+  const EV={young:'<h4 style="margin:0">חולדות צעירות · מרק רוזנצווייג (Mark Rosenzweig)</h4><p style="margin:6px 0 0">חולדות שגדלו בסביבה <b>מועשרת</b> פיתחו קורטקס <b>כבד ועבה יותר</b> מאחיהן מאותה המלטה שגדלו בסביבה <b>דלה</b>.</p>',
+    adult:'<h4 style="margin:0">חולדות בוגרות · בריונס ועמיתים (Briones et al., 2004)</h4><p style="margin:6px 0 0">25 חולדות מאותה המלטה גדלו יחד עד בגרות (120 יום), ואז עברו ל־30 יום לאחד משלושה תנאים. נמדד מספר הסינפסות לנוירון בקורטקס הראייה:</p><div class="evbars"><div class="lane"><span><b>מורכב</b>: יחד, צעצועים, מנהרות ומראות</span><div class="tr"><i style="width:100%;background:var(--good)"></i></div></div><div class="lane"><span><b>חברתי</b>: בזוגות, כלוב ריק</span><div class="tr"><i style="width:82.6%;background:var(--muted)"></i></div></div><div class="lane"><span><b>מבודד</b>: לבד, כלוב ריק</span><div class="tr"><i style="width:78.7%;background:var(--muted)"></i></div></div></div><p style="margin:8px 0 0">בתנאי המורכב היו <b>21%</b> יותר סינפסות מאשר בחברתי, ו־<b>27%</b> יותר מאשר במבודד. <span class="src mine">אורך הפסים חושב מהאחוזים</span> המסקנה: סביבה מועשרת משנה את המוח <b>גם בבגרות</b>.</p>',
+    violin:'<h4 style="margin:0">כנרים · אלברט ועמיתים (Elbert et al., 1995)</h4><p style="margin:6px 0 0">בקורטקס החישתי, האזור של אצבעות <b>יד שמאל</b>, שלוחצות על המיתרים, גדול יותר אצל כנרים מאשר אצל מי שלא מנגן. ביד ימין אין הבדל. ההבדל הכי גדול אצל מי שהתחיל לנגן <b>לפני גיל 12</b>.</p>',
+    heal:'<h4 style="margin:0">החלמה מפגיעה מוחית</h4><p style="margin:6px 0 0">אחרי שבץ, מחלה או תאונה, לפעמים האזור הפגוע שומר מספיק תפקוד, ולפעמים <b>אזורים אחרים לוקחים על עצמם את התפקוד</b>. למשל, חזרת השפה אחרי אירוע מוחי.</p>'};
+  seg('#ev-seg',d=>$('#ev-box').innerHTML=EV[d.v]);$('#ev-box').innerHTML=EV.young;
+})();
+})();
+</script>
