@@ -1301,13 +1301,14 @@ function Stepper(root,steps,onStep){
   const counts=(arr,mask)=>{const c=Array(BINS).fill(0);arr.forEach((b,i)=>{if(mask&&!mask[i])return;c[Math.min(BINS-1,Math.floor(b*BINS))]++});return c};
   const meanOf=(arr,mask)=>{let s=0,n=0;arr.forEach((b,i)=>{if(mask&&!mask[i])return;s+=b;n++});return n?s/n:0};
   const word=m=>m<.42?'קטן':m<.58?'בינוני':'גדול';
+  const ENV={drought:'בצורת',rain:'שנה גשומה',plenty:'שפע מכל הסוגים'};
   function init(){pop=Array.from({length:N},()=>clamp(.5+.17*gauss(),.04,.96));alive=pop.map(()=>true);born=pop.map(()=>false);gen=1;phase=0;prevPop=null;beforeSel=null;draw()}
   function select(){selEnv=env;beforeSel=pop.slice();alive=pop.map(b=>Math.random()<surv[env](b));
     if(alive.filter(Boolean).length<4){pop.map((b,i)=>[surv[env](b),i]).sort((a,b)=>b[0]-a[0]).slice(0,4).forEach(([,i])=>alive[i]=true)}}
   function breed(){prevPop=beforeSel||pop.slice();const par=pop.filter((b,i)=>alive[i]);born=alive.map(a=>!a);pop=pop.map((b,i)=>alive[i]?b:clamp(par[Math.floor(Math.random()*par.length)]+.05*gauss(),.02,.98));alive=pop.map(()=>true);gen++}
   function draw(){
-    birds.forEach((o,i)=>{const b=pop[i],th=3+10*b,L=6+8*b;o.beak.setAttribute('points','-16,'+(-7-th/2).toFixed(1)+' -16,'+(-7+th/2).toFixed(1)+' '+(-16-L).toFixed(1)+','+(-7+th*.1).toFixed(1));o.g.classList.toggle('dead',!alive[i]);o.g.classList.toggle('born',born[i]&&phase===2)});
-    island.setAttribute('fill',envFill[phase===1?selEnv:env]);
+    birds.forEach((o,i)=>{const b=pop[i],th=2+12*b,L=4+16*b;o.beak.setAttribute('points','-16,'+(-7-th/2).toFixed(1)+' -16,'+(-7+th/2).toFixed(1)+' '+(-16-L).toFixed(1)+','+(-7+th*.1).toFixed(1));o.g.classList.toggle('dead',!alive[i]);o.g.classList.toggle('born',born[i]&&phase===2)});
+    island.setAttribute('fill',envFill[phase===0?env:selEnv]);
     const c=counts(pop,phase===1?alive:null),g=phase===1?counts(beforeSel):(prevPop?counts(prevPop):null);
     bars.forEach((r,k)=>{const h=Math.min(96,c[k]*3.4);r.setAttribute('y',104-h);r.setAttribute('height',h)});
     ghosts.forEach((r,k)=>{const h=g?Math.min(96,g[k]*3.4):0;r.setAttribute('y',104-h);r.setAttribute('height',h)});
@@ -1319,9 +1320,10 @@ function Stepper(root,steps,onStep){
     else if(phase===1)t={drought:'<p><b>הסביבה בוחרת.</b> בבצורת הגרעינים הקטנים נגמרים, ונשארים רק גדולים וקשים. פרושים עם מקור קטן לא מצליחים לפצח אותם. שרדו '+k+' מתוך '+N+', רובם בעלי מקור גדול.</p><p><span class="src book">ספר</span> אחרי הבצורת של 1977 האוכלוסייה ירדה ביותר מ־80%.</p>',
       rain:'<p><b>הסביבה בוחרת.</b> אחרי גשמים רבים יש שפע של גרעינים קטנים, ועכשיו דווקא בעלי המקור הקטן מצליחים יותר. שרדו '+k+' מתוך '+N+'.</p><p><span class="src book">ספר</span> כך היה ב־1983. כשהסביבה משתנה, משתנה גם מי "מתאים".</p>',
       plenty:'<p><b>אין בררה.</b> יש גרעינים מכל הסוגים, כל פרוש מוצא מה לאכול, ואין תחרות. מי שמת, מת מסיבות אחרות, בלי קשר לגודל המקור. שרדו '+k+' מתוך '+N+'.</p><p>זו התשובה לשאלה 3: הפנוטיפ מכריע רק כשהסביבה קשה.</p>'}[selEnv];
-    else{const d=m-meanOf(prevPop||pop);t='<p><b>תורשה</b> (heredity). השורדים מתרבים, והצאצאים (בטבעת כתומה) יורשים מהם את הגנוטיפ. לכן הם דומים להורים בגודל המקור.</p><p>השווי לקו המקווקו, הדור הקודם: '+(Math.abs(d)<.03?'הממוצע כמעט לא זז.':d>0?'הממוצע זז לכיוון <b>מקור גדול</b>.':'הממוצע זז לכיוון <b>מקור קטן</b>.')+'</p>'}
+    else{const d=m-meanOf(prevPop||pop);t='<p><b>תורשה</b> (heredity). השורדים מתרבים, והצאצאים (בטבעת כתומה) יורשים מהם את הגנוטיפ. לכן הם דומים להורים בגודל המקור.</p><p>הסביבה שבחרה הייתה <b>'+ENV[selEnv]+'</b>. השווי לקו המקווקו, הדור הקודם: '+(Math.abs(d)<.03?'הממוצע כמעט לא זז.':d>0?'הממוצע זז לכיוון <b>מקור גדול</b>.':'הממוצע זז לכיוון <b>מקור קטן</b>.')+'</p>'}
+    if(phase>0&&env!==selEnv)t+='<p class="lbl">בחרת סביבה חדשה: <b>'+ENV[env]+'</b>. היא תבחר בסיבוב הבא, אחרי "הבא".</p>';
     $('#finch-text').innerHTML=t;
-    $('#finch-stats').textContent='דור '+gen+' · '+(phase===1?'שרדו '+k+' מתוך '+N:N+' פרושים')+' · מקור ממוצע: '+word(m);
+    $('#finch-stats').textContent='דור '+gen+' · '+(phase===1?'שרדו '+k+' מתוך '+N:N+' פרושים')+' · מקור ממוצע: '+(phase===2&&prevPop?word(meanOf(prevPop))+' ← '+word(m):word(m));
   }
   $('#finch-next').onclick=()=>{if(phase===0){select();phase=1}else if(phase===1){breed();phase=2}else{phase=0;born=pop.map(()=>false)}draw()};
   $('#finch-gen').onclick=()=>{if(phase===2){phase=0}if(phase===0)select();breed();phase=2;draw()};
