@@ -1171,6 +1171,10 @@ svg .nrf.hl{fill:color-mix(in srgb,var(--spark) 45%,var(--tissue));stroke:var(--
 #br.show-areas .area-l{opacity:1}
 #br[data-layer="1"] .bs:not(.l1):not(.area),#br[data-layer="2"] .bs:not(.l2):not(.area),#br[data-layer="3"] .bs:not(.l3):not(.lobe):not(.area){opacity:.15}
 #br .bs.on{filter:drop-shadow(0 0 3px var(--spark)) drop-shadow(0 0 6px var(--spark))}
+#br .bs,#br text.lk{cursor:pointer}
+#br text.lk{pointer-events:auto}
+#br:not(.show-areas) .area-l text.lk{pointer-events:none}
+#br-info .chips{margin-top:4px}
 .hem{fill:var(--tissue);stroke:var(--tissue-line);stroke-width:1.5;transition:fill .4s}
 .hem.on{fill:color-mix(in srgb,var(--spark) 42%,var(--tissue))}
 .sp-path{opacity:.12;transition:opacity .3s}
@@ -1603,7 +1607,19 @@ function Stepper(root,steps,onStep){
   function pick(id){const b=B[id];$$('#br [data-s]').forEach(e=>e.classList.toggle('on',e.dataset.s===id));
     $('#br-info').innerHTML='<h4>'+st(b[0])+' <span class="en">'+b[1]+'</span></h4><dl><dt>שכבה</dt><dd>'+L[b[2]]+'</dd><dt>איפה</dt><dd>'+st(b[3])+'</dd><dt>תפקיד</dt><dd>'+st(b[4])+'</dd>'+(b[5]?'<dt>עדות <span class="src book">ספר</span></dt><dd>'+b[5]+'</dd>':'')+'</dl>'}
   $$('#br [data-s]').forEach(e=>e.addEventListener('click',()=>pick(e.dataset.s)));
-  seg('#br-layer',d=>svg.dataset.layer=d.v);
+  /* לחיצה על השם של מבנה פותחת את המבנה (ולא את המוח הגדול שמאחוריו) */
+  const NM={'כפיס המוח':'cc','תלמוס':'thalamus','היפותלמוס':'hypothalamus','יותרת המוח':'pituitary','אמיגדלה':'amygdala','היפוקמפוס':'hippocampus','גשר':'pons','מוח מוארך':'medulla','מוחון':'cerebellum','תצורת הרשת':'reticular','גזע המוח':'brainstem','אונת המצח':'frontal','אונת הקדקוד':'parietal','אונת העורף':'occipital','אונת הרקה':'temporal','קורטקס מוטורי':'motor','סומטו־סנסורי':'somato','ברוקה':'broca','שמע':'auditory','ורניקה':'wernicke','ראייה':'visual'};
+  $$('#br .t text').forEach(t=>{const id=NM[t.textContent.trim()];if(!id)return;t.classList.add('lk');t.addEventListener('click',()=>pick(id))});
+  /* בחירת שכבה מציגה את ההסבר של השכבה */
+  const LY=[['שלוש השכבות','מבפנים החוצה: מהתפקודים הבסיסיים לגבוהים.',[['I גזע המוח','l1'],['II לימבית','l2'],['III המוח הגדול','l3']],'בחרי שכבה למעלה, או לחצי על מבנה בציור.'],
+    ['שכבה I · גזע המוח, תלמוס ומוחון','הכי עמוק.',['medulla','pons','reticular','thalamus','cerebellum'],'תהליכי חיים בסיסיים: נשימה, דופק, עוררות, תנועה.'],
+    ['שכבה II · המערכת הלימבית','באמצע. רק אצל יונקים.',['hippocampus','amygdala','hypothalamus'],'מוטיבציה, רגש וזיכרון. איזון פנימי.'],
+    ['שכבה III · המוח הגדול','בחוץ. כשני שלישים ממסת המוח.',['cerebrum','cc','frontal','parietal','occipital','temporal'],'חשיבה, תכנון, ארגון מידע חושי. כאן התודעה.']];
+  function layer(v){const y=LY[v];$$('#br [data-s]').forEach(e=>e.classList.remove('on'));
+    const items=v===0?'':'<div class="chips">'+y[2].map(id=>'<button type="button" class="chip" data-pick="'+id+'">'+B[id][0].replace(' ★','')+'</button>').join('')+'</div>';
+    $('#br-info').innerHTML='<h4>'+y[0]+'</h4><dl><dt>איפה</dt><dd>'+y[1]+'</dd><dt>תפקיד</dt><dd>'+y[3]+'</dd>'+(v===0?'':'<dt>המבנים (לחצי על מבנה)</dt><dd>'+items+'</dd>')+'</dl>';
+    $$('#br-info [data-pick]').forEach(b=>b.addEventListener('click',()=>{const id=b.dataset.pick,lat=['frontal','parietal','occipital','temporal'].includes(id),med=!lat&&id!=='cerebrum';if(lat&&!$('#view-med').hidden||med&&$('#view-med').hidden)$$('#br-view button')[lat?1:0].click();pick(id)}))}
+  seg('#br-layer',d=>{svg.dataset.layer=d.v;layer(+d.v)});
   seg('#br-view',d=>{const lat=d.v==='lat';$('#view-lat').toggleAttribute('hidden',!lat);$('#view-med').toggleAttribute('hidden',lat);$('#br-areas-row').hidden=!lat;pick(lat?'frontal':'thalamus')});
   $('#br-areas').onclick=function(){const on=!svg.classList.contains('show-areas');svg.classList.toggle('show-areas',on);this.setAttribute('aria-pressed',on?'true':'false');this.textContent=on?'הסתירי אזורים תפקודיים':'הראי אזורים תפקודיים';if(on)pick('motor')};
   pick('thalamus');
