@@ -5,3 +5,6 @@
 # macOS / Obsidian
 .DS_Store
 .obsidian/workspace.json
+
+# לוגים של ממתינים.sh
+פודקאסטים/.log-*
